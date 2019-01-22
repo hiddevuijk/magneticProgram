@@ -37,7 +37,7 @@ struct Deriv {
 		double v0;	// self-propulsion speed
 		Wall* wall_ptr;
 		Bfield* bfield_ptr;
-		Ranq2 ranNR;	// the ranom number generator
+		Ranq2 ranNR;	// the random number generator
 
 		double sqrt2;
 };
