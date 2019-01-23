@@ -42,9 +42,11 @@ void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
 		//Bri = system.bfield_ptr->f(system.r[i],t);
 		Bri = 0;
 
+		
 		xi.x = ndist(ranNR);
 		xi.y = ndist(ranNR);
 		xi.z = ndist(ranNR);
+		// xi *= sqrt_dt*sqrt2
 
 		system.v[i].x += (Bri*system.v[i].y*dt - 
 				system.v[i].x*dt + system.v0*system.p[i].x*dt +
@@ -68,6 +70,7 @@ void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
 			eta.x = ndist(ranNR)*sqrt_dt*system.sqrt_2Dr;
 			eta.y = ndist(ranNR)*sqrt_dt*system.sqrt_2Dr;
 			eta.z = ndist(ranNR)*sqrt_dt*system.sqrt_2Dr;
+			//eta *= sqrt_dt*system.sqrt_2Dr
 
 			dp.x = eta.y*system.p[i].z - eta.z*system.p[i].y;	
 			dp.y = eta.z*system.p[i].x - eta.x*system.p[i].z;	
