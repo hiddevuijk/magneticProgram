@@ -64,7 +64,7 @@ System::System(ConfigFile config)
 	} else if( BType == "sineY" ) {
 		bfield_ptr = &fieldSineY;
 	}
-	
+	// else error!!!!	
 
 }
 

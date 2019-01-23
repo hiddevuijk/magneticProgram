@@ -42,7 +42,6 @@ void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
 {
 	sqrt_dt = std::sqrt(dt);
 
-	Bri; // magnetic field at position ri
 
 	for(unsigned int i=0;i<system.N;++i) {
 

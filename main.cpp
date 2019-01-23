@@ -8,6 +8,9 @@
 #include "bfield.h"
 #include "system.h"
 #include "bd.h"
+#include "density.h"
+#include "orientation.h"
+#include "flux.h"
 
 #include <iostream>
 #include <iomanip>
@@ -34,15 +37,18 @@ int main()
 	// read system parameters
 	System system(config);
 
-
-
 	// start with random uniform dist. in r
 	// start with ~ Boltzmann in v
 	// start with random unit sphere in p
 	system.init_random(ranNR);
 
+
+	// increments coordinates one time step
 	STEPPER step;
 
+	Density_xy density(0.1,system.L);
+	Orientation_xy orientation(0.1,system.L);
+	Flux_xy flux(0.1,system.L);
 
 	// integrate Nt_init time steps
 	double t_init = 0;
@@ -58,29 +64,44 @@ int main()
 	cout << "Ended equilibration. Starting sampling ... \n";
 
 
-	//double t = 0;
+	double t = t_init;
 	for(; ti < (int_params.Nt+int_params.Nt_init); ++ti) {
 		if( (ti%int_params.print_freq) == 0 ) {
 			cout << (int_params.Nt_init + int_params.Nt) << '\t';
 			cout << ti << endl;
 		}
 
-		step(int_params.dt,t_init, system,ranNR);		
+		step(int_params.dt,t, system,ranNR);		
 
 		if( (ti%int_params.sample_freq) == 0 ) {
-			// sample
+			density.sample(system);
+			orientation.sample(system);
+			flux.sample(system);
 		}
 	}
 
 
+	// normalize and save density
+	density.normalize(system);
+	density.write("rho.dat");
+	density.write_bins("rho_bins.dat");
+
+	// normalize and save orientation
+	orientation.normalize();
+	orientation.writeX("px.dat");
+	orientation.writeY("py.dat");
+	orientation.write_bins("p_bins.dat");
+
+
+	// normalize and save flux
+	flux.normalize(system);
+	flux.writeX("fx.dat");
+	flux.writeY("fy.dat");
+	flux.writeZ("fz.dat");
+	flux.write_bins("f_bins.dat");
 
 	return 0;
 }
-
-
-
-
-
 
 
 
