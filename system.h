@@ -30,10 +30,8 @@ public:
 	std::vector<XYZ> p;
 	
 	
-	BsinY fieldSineY;
-
 	BNone noField;
-
+	BsinY fieldSineY;
 
 	Bfield *bfield_ptr;
 
@@ -44,8 +42,9 @@ public:
 
 
 System::System(ConfigFile config)
-: fieldSineY(config.read<double>("B"), config.read<double>("w") )
+: noField(), fieldSineY(config.read<double>("B"), config.read<double>("w") )
 {
+	XYZ rr;
 	N = config.read<unsigned int>("N");
 	L = config.read<double>("L");
 	m = config.read<double>("m");
@@ -60,7 +59,6 @@ System::System(ConfigFile config)
 	
 	std::string BType = config.read<std::string>("BType");
 
-		
 	if( BType == "none") {
 		bfield_ptr = &noField;	
 	} else if( BType == "sineY" ) {
