@@ -25,15 +25,8 @@ public:
 
 	// evolves the state of the system to t+dt
 	void  operator() ( double dt,double &t, System &system, Ranq2 &ranNR);
-
-
-};
-
-
-void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
-{
-	double sqrt_dt = std::sqrt(dt);
-
+private:
+	double sqrt_dt, Bri; 
 	// random numbers for r, v increment
 	XYZ xi;	
 	// random numbers for p increment
@@ -41,18 +34,21 @@ void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
 	// p increment
 	XYZ dp;
 
-	double Bri; // magnetic field at position ri
 
-	
-	
+};
+
+
+void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
+{
+	sqrt_dt = std::sqrt(dt);
+
+	Bri; // magnetic field at position ri
+
 	for(unsigned int i=0;i<system.N;++i) {
 
 		Bri = system.bfield_ptr->f(system.r[i]);
-		Bri = 0;
 
-		
 		stepper::xyz_random_normal(xi,ranNR);
-
 		xi *= sqrt_dt*stepper::sqrt2;
 
 		system.v[i].x += (Bri*system.v[i].y*dt - 
