@@ -11,7 +11,7 @@
 
 namespace stepper {
 // make r to a random normal distributed vector
-void xyz_random_normal(XYZ &r, Ranq2 &ranNR) {
+inline void xyz_random_normal(XYZ &r, Ranq2 &ranNR) {
 	r.x = ndist(ranNR);
 	r.y = ndist(ranNR);
 	r.z = ndist(ranNR);
