@@ -44,11 +44,11 @@ int main()
 
 
 	// increments coordinates one time step
-	STEPPER step;
+	//STEPPER step;
 
-	Density_xy density(0.1,system.L);
-	Orientation_xy orientation(0.1,system.L);
-	Flux_xy flux(0.1,system.L);
+	Density_xy density(int_params.bs,system.L);
+	Orientation_xy orientation(int_params.bs,system.L);
+	Flux_xy flux(int_params.bs,system.L);
 
 	// integrate Nt_init time steps
 	double t_init = 0;
@@ -59,7 +59,7 @@ int main()
 			cout << (int_params.Nt_init + int_params.Nt) << '\t';
 			cout << ti << endl;
 		}
-		step(int_params.dt,t_init, system,ranNR);		
+		stepper::step(system,int_params.dt,t_init,ranNR);		
 	}
 	cout << "Ended equilibration. Starting sampling ... \n";
 
@@ -71,7 +71,7 @@ int main()
 			cout << ti << endl;
 		}
 
-		step(int_params.dt,t, system,ranNR);		
+		stepper::step(system,int_params.dt,t,ranNR);		
 
 		if( (ti%int_params.sample_freq) == 0 ) {
 			density.sample(system);
@@ -80,7 +80,7 @@ int main()
 		}
 	}
 
-
+	cout << "Done simulation. Normalizing and writing results ..." << endl;
 	// normalize and save density
 	density.normalize(system);
 	density.write("rho.dat");

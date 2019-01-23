@@ -3,7 +3,7 @@
 
 // density of the system projected on the xy plane
 
-
+#include <iostream>
 
 #include "system.h"
 
@@ -70,8 +70,9 @@ void Density_xy::sample(const System &system)
 		y -= system.L*std::floor(y/system.L);	
 		jy = std::floor(y/bs);
 
-		if((jx<Nbin) && (jy<Nbin) ) 
+		if((jx<Nbin) && (jy<Nbin) ) {
 			rho[jx][jy] += 1.;
+		}
 	}
 		
 }
