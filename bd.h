@@ -9,17 +9,25 @@
 #include <cmath>
 #include <vector>
 
+namespace stepper {
+// make r to a random normal distributed vector
+void xyz_random_normal(XYZ &r, Ranq2 &ranNR) {
+	r.x = ndist(ranNR);
+	r.y = ndist(ranNR);
+	r.z = ndist(ranNR);
+}
+const long double sqrt2 = std::sqrt(2.);
+};
+
 struct STEPPER {
 public:
-	STEPPER(){	sqrt2 = std::sqrt(2.); }
+	STEPPER(){}
 
 	// evolves the state of the system to t+dt
 	void  operator() ( double dt,double &t, System &system, Ranq2 &ranNR);
 
-private:
-	double sqrt2;
-};
 
+};
 
 
 void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
@@ -43,10 +51,9 @@ void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
 		Bri = 0;
 
 		
-		xi.x = ndist(ranNR);
-		xi.y = ndist(ranNR);
-		xi.z = ndist(ranNR);
-		xi *= sqrt_dt*sqrt2;
+		stepper::xyz_random_normal(xi,ranNR);
+
+		xi *= sqrt_dt*stepper::sqrt2;
 
 		system.v[i].x += (Bri*system.v[i].y*dt - 
 				system.v[i].x*dt + system.v0*system.p[i].x*dt +
@@ -62,9 +69,8 @@ void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
 		system.r[i] += system.dr[i];
 
 		if(system.v0 > 0) {
-			eta.x = ndist(ranNR);
-			eta.y = ndist(ranNR);
-			eta.z = ndist(ranNR);
+			
+			stepper::xyz_random_normal(eta,ranNR);
 			eta *= sqrt_dt*system.sqrt_2Dr;
 
 			dp = xyz::cross(eta,system.p[i]);
