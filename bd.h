@@ -17,37 +17,21 @@ inline void xyz_random_normal(XYZ &r, Ranq2 &ranNR) {
 	r.z = ndist(ranNR);
 }
 const long double sqrt2 = std::sqrt(2.);
-};
-
-struct STEPPER {
-public:
-	STEPPER(){}
-
-	// evolves the state of the system to t+dt
-	void  operator() ( double dt,double &t, System &system, Ranq2 &ranNR);
-private:
-	double sqrt_dt, Bri; 
-	// random numbers for r, v increment
-	XYZ xi;	
-	// random numbers for p increment
-	XYZ eta;
-	// p increment
-	XYZ dp;
 
 
-};
-
-
-void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
+void step(System &system, double dt, double &t, Ranq2 &ranNR )
 {
-	sqrt_dt = std::sqrt(dt);
+	double sqrt_dt = std::sqrt(dt);
+	double Bri;
+	XYZ xi,eta,dp;	
+
 
 
 	for(unsigned int i=0;i<system.N;++i) {
 
 		Bri = system.bfield_ptr->f(system.r[i]);
 
-		stepper::xyz_random_normal(xi,ranNR);
+		xyz_random_normal(xi,ranNR);
 		xi *= sqrt_dt*stepper::sqrt2;
 
 		system.v[i].x += (Bri*system.v[i].y*dt - 
@@ -65,7 +49,7 @@ void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
 
 		if(system.v0 > 0) {
 			
-			stepper::xyz_random_normal(eta,ranNR);
+			xyz_random_normal(eta,ranNR);
 			eta *= sqrt_dt*system.sqrt_2Dr;
 
 			dp = xyz::cross(eta,system.p[i]);
@@ -81,7 +65,7 @@ void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
 
 
 
-
+};
 
 #endif
 
