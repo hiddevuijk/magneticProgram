@@ -27,58 +27,58 @@ public:
 
 	// addition, subtraction, multiplication and division	
 	XYZ operator+=(const XYZ &r) {
-		this->x += r.x;
-		this->y += r.y;
-		this->z += r.z;
+		x += r.x;
+		y += r.y;
+		z += r.z;
 		return *this;
 	}
 
 	XYZ operator+=(const double & add) {
-		this->x += add;
-		this->y += add;
-		this->z += add;
+		x += add;
+		y += add;
+		z += add;
 		return *this;
 	}
 
 	XYZ operator-=(const XYZ &r) {
-		this->x -= r.x;
-		this->y -= r.y;
-		this->z -= r.z;
+		x -= r.x;
+		y -= r.y;
+		z -= r.z;
 		return *this;
 	}
 
 	XYZ operator-=(const double & sub) {
-		this->x -= sub;
-		this->y -= sub;
-		this->z -= sub;
+		x -= sub;
+		y -= sub;
+		z -= sub;
 		return *this;
 	}
 
 	XYZ operator*=(const XYZ &r) {
-		this->x *= r.x;
-		this->y *= r.y;
-		this->z *= r.z;
+		x *= r.x;
+		y *= r.y;
+		z *= r.z;
 		return *this;
 	}
 
 	XYZ operator*=(const double & mult) {
-		this->x *= mult;
-		this->y *= mult;
-		this->z *= mult;
+		x *= mult;
+		y *= mult;
+		z *= mult;
 		return *this;
 	}
 
 	XYZ operator/=(const XYZ &r) {
-		this->x /= r.x;
-		this->y /= r.y;
-		this->z /= r.z;
+		x /= r.x;
+		y /= r.y;
+		z /= r.z;
 		return *this;
 	}
 
 	XYZ operator/=(const double & div) {
-		this->x /= div;
-		this->y /= div;
-		this->z /= div;
+		x /= div;
+		y /= div;
+		z /= div;
 		return *this;
 	}
 };
