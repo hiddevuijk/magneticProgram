@@ -56,6 +56,14 @@ int main()
 	}
 	cout << system.r[0].x << endl;
 
+	cout << endl;
+	XYZ x;
+	x = XYZ(1.,2.,3.);
+	cout << x.x << endl << x.y << endl << x.z << endl;
+	cout << endl;
+	x.random_normal(ranNR);
+	cout << x.x << endl << x.y << endl << x.z << endl;
+
 
 	return 0;
 }
