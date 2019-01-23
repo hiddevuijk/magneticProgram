@@ -7,14 +7,14 @@ Dr = 20.
 seed = 123456789
 
 #magnetic field parameters
-BType = "sineY"
+BType = sineY
 B = 10.
 w = 2.
 
 #integration parameter
-Nt_init = 10000
-Nt = 100
-sample_freq = 10
-print_freq = 10
+Nt_init = 1000
+Nt = 1000
+sample_freq = 100
+print_freq = 100
 dt = 0.0000001
 

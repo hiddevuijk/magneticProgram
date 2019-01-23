@@ -39,45 +39,37 @@ void STEPPER::operator() ( double dt, double &t, System &system, Ranq2 &ranNR )
 	
 	for(unsigned int i=0;i<system.N;++i) {
 
-		//Bri = system.bfield_ptr->f(system.r[i],t);
+		Bri = system.bfield_ptr->f(system.r[i]);
 		Bri = 0;
 
 		
 		xi.x = ndist(ranNR);
 		xi.y = ndist(ranNR);
 		xi.z = ndist(ranNR);
-		// xi *= sqrt_dt*sqrt2
+		xi *= sqrt_dt*sqrt2;
 
 		system.v[i].x += (Bri*system.v[i].y*dt - 
 				system.v[i].x*dt + system.v0*system.p[i].x*dt +
-				xi.x*sqrt_dt*sqrt2)/system.m;	
+				xi.x)/system.m;	
 		system.v[i].y += (-Bri*system.v[i].x*dt - 
 				system.v[i].y*dt + system.v0*system.p[i].y*dt +
-				xi.y*sqrt_dt*sqrt2)/system.m;	
+				xi.y)/system.m;	
 		system.v[i].z += (-system.v[i].z*dt + 
-				system.v0*system.p[i].z + xi.z*sqrt_dt*sqrt2)/system.m;
+				system.v0*system.p[i].z*dt + xi.z)/system.m;
 
 
-		system.dr[i].x = system.v[i].x*dt;
-		system.dr[i].y = system.v[i].y*dt;
-		system.dr[i].z = system.v[i].z*dt;
-
-		system.r[i].x += system.dr[i].x;
-		system.r[i].y += system.dr[i].y;
-		system.r[i].z += system.dr[i].z;
+		system.dr[i] = system.v[i]*dt;
+		system.r[i] += system.dr[i];
 
 		if(system.v0 > 0) {
-			eta.x = ndist(ranNR)*sqrt_dt*system.sqrt_2Dr;
-			eta.y = ndist(ranNR)*sqrt_dt*system.sqrt_2Dr;
-			eta.z = ndist(ranNR)*sqrt_dt*system.sqrt_2Dr;
-			//eta *= sqrt_dt*system.sqrt_2Dr
+			eta.x = ndist(ranNR);
+			eta.y = ndist(ranNR);
+			eta.z = ndist(ranNR);
+			eta *= sqrt_dt*system.sqrt_2Dr;
 
-			dp.x = eta.y*system.p[i].z - eta.z*system.p[i].y;	
-			dp.y = eta.z*system.p[i].x - eta.x*system.p[i].z;	
-			dp.z = eta.x*system.p[i].y - eta.y*system.p[i].x;	
-			system.p[i].x += dp.x;
-			system.p[i].y += dp.y;
-			system.p[i].z += dp.z;
+			dp = xyz::cross(eta,system.p[i]);
+
+			system.p[i] += dp;
 			system.p[i].normalize();
 		}
 	}

@@ -10,6 +10,7 @@
 #include "bd.h"
 
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <vector>
 #include <string>
@@ -33,36 +34,44 @@ int main()
 	// read system parameters
 	System system(config);
 
+
+
 	// start with random uniform dist. in r
 	// start with ~ Boltzmann in v
 	// start with random unit sphere in p
 	system.init_random(ranNR);
 
 	STEPPER step;
-	cout << system.r[0].x << endl;
+
 
 	// integrate Nt_init time steps
 	double t_init = 0;
-	for(unsigned int ti = 0; ti < int_params.Nt_init; ++ ti) {
+	unsigned int ti;
+	cout << "Starting with equilibration ...\n";
+	for( ti = 0; ti < int_params.Nt_init; ++ ti) {
+		if( (ti%int_params.print_freq) == 0 ) {
+			cout << (int_params.Nt_init + int_params.Nt) << '\t';
+			cout << ti << endl;
+		}
 		step(int_params.dt,t_init, system,ranNR);		
 	}
+	cout << "Ended equilibration. Starting sampling ... \n";
 
 
+	//double t = 0;
+	for(; ti < (int_params.Nt+int_params.Nt_init); ++ti) {
+		if( (ti%int_params.print_freq) == 0 ) {
+			cout << (int_params.Nt_init + int_params.Nt) << '\t';
+			cout << ti << endl;
+		}
 
-	double t = 0;
-	for(unsigned int ti = 0; ti < int_params.Nt; ++ti) {
 		step(int_params.dt,t_init, system,ranNR);		
 
+		if( (ti%int_params.sample_freq) == 0 ) {
+			// sample
+		}
 	}
-	cout << system.r[0].x << endl;
 
-	cout << endl;
-	XYZ x;
-	x = XYZ(1.,2.,3.);
-	cout << x.x << endl << x.y << endl << x.z << endl;
-	cout << endl;
-	x.random_normal(ranNR);
-	cout << x.x << endl << x.y << endl << x.z << endl;
 
 
 	return 0;
