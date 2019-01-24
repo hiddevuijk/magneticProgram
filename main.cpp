@@ -6,7 +6,7 @@
 
 #include "xyz.h"
 #include "bfield.h"
-#include "system.h"
+#include "system_AT.h"
 #include "density.h"
 #include "orientation.h"
 #include "flux.h"
