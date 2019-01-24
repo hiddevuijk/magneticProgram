@@ -103,6 +103,9 @@ XYZ operator+ (const XYZ &r1,const XYZ &r2)
 XYZ operator+ (const XYZ &r1,double add)
 { return XYZ(r1.x+add,r1.y+add,r1.z+add); }
 
+XYZ operator+ (double add, const XYZ &r1)
+{ return XYZ(r1.x+add,r1.y+add,r1.z+add); }
+
 XYZ operator- (const XYZ &r1,const XYZ &r2)
 { return XYZ(r1.x-r2.x,r1.y-r2.y,r1.z-r2.z); }
 
@@ -113,6 +116,9 @@ XYZ operator* (const XYZ &r1,const XYZ &r2)
 { return XYZ(r1.x*r2.x,r1.y*r2.y,r1.z*r2.z); }
 
 XYZ operator* (const XYZ &r1, double mult)
+{ return XYZ(r1.x*mult,r1.y*mult,r1.z*mult); }
+
+XYZ operator* ( double mult,const XYZ &r1)
 { return XYZ(r1.x*mult,r1.y*mult,r1.z*mult); }
 
 XYZ operator/ (const XYZ &r1,const XYZ &r2)
