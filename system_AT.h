@@ -115,11 +115,6 @@ void System::step(Ranq2 &ranNR )
 		// in stead of v
 		r[i] += dt2*eta;
 
-		Bri = bfield_ptr->f(r[i]);
-		v[i].x = eta.x +( Bri*eta.y*dt2 + v0*p[i].x*dt2)/m;
-		v[i].y = eta.y +(-Bri*eta.x*dt2 + v0*p[i].x*dt2)/m;
-		v[i].z = eta.z + v0*p[i].z*dt2;
-
 			// half a time step in p space
 		if( v0 > 0) {
 			system_func::xyz_random_normal(eta,ranNR);
@@ -128,6 +123,13 @@ void System::step(Ranq2 &ranNR )
 			p[i] += dp;
 			p[i].normalize();
 		}
+
+		Bri = bfield_ptr->f(r[i]);
+		v[i].x = eta.x +( Bri*eta.y*dt2 + v0*p[i].x*dt2)/m;
+		v[i].y = eta.y +(-Bri*eta.x*dt2 + v0*p[i].x*dt2)/m;
+		v[i].z = eta.z + v0*p[i].z*dt2;
+
+
 	}
 
 	t += dt;
