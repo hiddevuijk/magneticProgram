@@ -53,7 +53,8 @@ int main()
 			cout << (int_params.Nt_init + int_params.Nt) << '\t';
 			cout << ti << endl;
 		}
-		system.step(ranNR);		
+		for(int tti=0; tti < int_params.t_unit; ++tti)		
+			system.step(ranNR);		
 	}
 	cout << "Ended equilibration. Starting sampling ... \n";
 
@@ -63,8 +64,8 @@ int main()
 			cout << (int_params.Nt_init + int_params.Nt) << '\t';
 			cout << ti << endl;
 		}
-
-		system.step(ranNR);		
+		for(int tti = 0;tti<int_params.t_unit;++tti)
+			system.step(ranNR);		
 
 		if( (ti%int_params.sample_freq) == 0 ) {
 			density.sample(system);

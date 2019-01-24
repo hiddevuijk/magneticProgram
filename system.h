@@ -182,6 +182,7 @@ public:
 		Nt = config.read<unsigned int>("Nt");
 		sample_freq = config.read<unsigned int>("sample_freq");
 		print_freq = config.read<unsigned int>("print_freq");
+		t_unit = config.read<unsigned int>("t_unit");
 		dt = config.read<double>("dt");
 		bs = config.read<double>("bs");
 	}
@@ -190,6 +191,7 @@ public:
 	unsigned int Nt;
 	unsigned int sample_freq;
 	unsigned int print_freq;
+	unsigned int t_unit;
 	double dt;
 	double bs;
 };
