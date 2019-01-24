@@ -7,7 +7,6 @@
 #include "xyz.h"
 #include "bfield.h"
 #include "system.h"
-#include "bd.h"
 #include "density.h"
 #include "orientation.h"
 #include "flux.h"
@@ -29,29 +28,24 @@ int main()
 	// read input into config
 	ConfigFile config("input.txt");
 
-	// random number generator
-	Ranq2 ranNR(config.read<unsigned int>("seed"));
-
 	// read integration parameters
 	Integration int_params(config);
+
 	// read system parameters
 	System system(config);
 
-	// start with random uniform dist. in r
-	// start with ~ Boltzmann in v
-	// start with random unit sphere in p
+	// random number generator
+	Ranq2 ranNR(config.read<unsigned int>("seed"));
+
+	// start with random config. 
 	system.init_random(ranNR);
 
-
-	// increments coordinates one time step
-	//STEPPER step;
-
+	// objects to sample density, orientation and flux
 	Density_xy density(int_params.bs,system.L);
 	Orientation_xy orientation(int_params.bs,system.L);
 	Flux_xy flux(int_params.bs,system.L);
 
 	// integrate Nt_init time steps
-	double t_init = 0;
 	unsigned int ti;
 	cout << "Starting with equilibration ...\n";
 	for( ti = 0; ti < int_params.Nt_init; ++ ti) {
@@ -59,19 +53,18 @@ int main()
 			cout << (int_params.Nt_init + int_params.Nt) << '\t';
 			cout << ti << endl;
 		}
-		stepper::step(system,int_params.dt,t_init,ranNR);		
+		system.step(ranNR);		
 	}
 	cout << "Ended equilibration. Starting sampling ... \n";
 
 
-	double t = t_init;
 	for(; ti < (int_params.Nt+int_params.Nt_init); ++ti) {
 		if( (ti%int_params.print_freq) == 0 ) {
 			cout << (int_params.Nt_init + int_params.Nt) << '\t';
 			cout << ti << endl;
 		}
 
-		stepper::step(system,int_params.dt,t,ranNR);		
+		system.step(ranNR);		
 
 		if( (ti%int_params.sample_freq) == 0 ) {
 			density.sample(system);
@@ -90,8 +83,8 @@ int main()
 	orientation.normalize();
 	orientation.writeX("px.dat");
 	orientation.writeY("py.dat");
+	orientation.writeZ("pz.dat");
 	orientation.write_bins("p_bins.dat");
-
 
 	// normalize and save flux
 	flux.normalize(system);
