@@ -25,6 +25,12 @@ public:
 		z *= d/len;
 	}
 
+	void pbc(double L) {
+		x -= L*std::floor(x/L);
+		y -= L*std::floor(y/L);
+		z -= L*std::floor(z/L);
+	}
+
 	// addition, subtraction, multiplication and division	
 	XYZ operator+=(const XYZ &r) {
 		x += r.x;
