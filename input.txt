@@ -1,20 +1,20 @@
 #system parameters
-N=10
+N=100
 L = 10.
 m = 0.01
-v0 = 10.
+v0 = 5.
 Dr = 20.
-seed = 133456789
+seed = 123456789
 
 #magnetic field parameters
 BType = sineY
-B = 1.
-w = 0.6283185307179586.
+B = 8.
+w = 0.6283185307179586
 
 #integration parameter
-Nt_init = 0
-Nt = 100
-sample_freq = 1
-print_freq = 100000
-dt = 0.0001
-bs = 0.1
+Nt_init = 5000
+Nt = 200000
+sample_freq = 10000
+print_freq = 5000000
+dt = 0.00001
+bs = .1
