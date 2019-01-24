@@ -13,6 +13,7 @@
 class Density_xy {
 public:
 	Density_xy( double bs, double max);	
+
 	void sample(const System &system);
 
 	void normalize(const System &system);
@@ -35,8 +36,6 @@ private:
 	std::vector<double> bins;
 
 	unsigned int Nsample;
-
-	
 
 };
 
