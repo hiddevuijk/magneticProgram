@@ -81,7 +81,8 @@ void Orientation_xy::normalize()
 {
 	for(unsigned int jx = 0;jx < Nbin; ++jx ) {
 		for(unsigned int jy = 0;jy < Nbin; ++jy ) {
-			p[jx][jy] /= p_in_bin[jx][jy];
+			if(p_in_bin[jx][jy] > 0 ) 
+				p[jx][jy] /= p_in_bin[jx][jy];
 		}
 	}
 }
