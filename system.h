@@ -7,9 +7,17 @@
 
 #include "xyz.h"
 #include "bfield.h"
-
+#include "box_muller.h"
 
 #include <vector>
+
+namespace system_func {
+inline void xyz_random_normal(XYZ &r, Ranq2 &ranNR) {
+	r.x = ndist(ranNR);
+	r.y = ndist(ranNR);
+	r.z = ndist(ranNR);
+}
+};
 
 struct System {
 public:
@@ -21,9 +29,13 @@ public:
 	double m;
 	double v0;
 	double Dr;
-	double sqrt_2Dr;
+	double dt;
 
 
+	double sqrt_2dt;
+	double sqrt_2dt_Dr;
+
+	double t;
 	std::vector<XYZ> r;
 	std::vector<XYZ> dr;
 	std::vector<XYZ> v;
@@ -38,7 +50,48 @@ public:
 	// initialize with random coordinates.
 	void init_random(Ranq2 &ranNR);
 
+	// increment time
+	void step(Ranq2 &ranNR );
+
+	// temporary containers
+	double Bri;
+	XYZ xi,eta,dp;	
+
+
 };
+
+void System::step(Ranq2 &ranNR )
+{
+	for(unsigned int i=0;i<N;++i) {
+
+		Bri = bfield_ptr->f(r[i]);
+
+		system_func::xyz_random_normal(xi,ranNR);
+		xi *= sqrt_2dt;
+
+		//dr[i] = v[i]*dt;
+		//r[i] += dr[i];
+		r[i] += v[i]*dt;
+
+		v[i].x += ( Bri*v[i].y*dt - v[i].x*dt + v0*p[i].x*dt + xi.x)/m;	
+		v[i].y += (-Bri*v[i].x*dt - v[i].y*dt + v0*p[i].y*dt + xi.y)/m;	
+		v[i].z += (-v[i].z*dt + v0*p[i].z*dt + xi.z)/m;
+
+		if( v0 > 0) {
+			
+			system_func::xyz_random_normal(eta,ranNR);
+			eta *= sqrt_2dt_Dr;
+
+			dp = xyz::cross(eta,p[i]);
+
+			p[i] += dp;
+			p[i].normalize();
+		}
+	}
+
+	t += dt;
+}
+
 
 
 System::System(ConfigFile config)
@@ -50,8 +103,11 @@ System::System(ConfigFile config)
 	m = config.read<double>("m");
 	v0 = config.read<double>("v0");
 	Dr = config.read<double>("Dr");
-	sqrt_2Dr = std::sqrt(2*Dr);
+	dt = config.read<double>("dt");
+	sqrt_2dt = std::sqrt(2*dt);
+	sqrt_2dt_Dr = std::sqrt(2*dt*Dr);
 
+	t = 0.0;
 	r = std::vector<XYZ>(N);
 	dr = std::vector<XYZ>(N);
 	v = std::vector<XYZ>(N);
@@ -63,9 +119,9 @@ System::System(ConfigFile config)
 		bfield_ptr = &noField;	
 	} else if( BType == "sineY" ) {
 		bfield_ptr = &fieldSineY;
+	} else {
+		cerr << "ERROR: " << BType << " is not a valid option.";
 	}
-	// else error!!!!	
-
 }
 
 
