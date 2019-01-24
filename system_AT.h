@@ -92,7 +92,7 @@ void System::step(Ranq2 &ranNR )
 
 		v[i].x += ( Bri*v[i].y*dt2 + v0*p[i].x*dt2)/m;
 		v[i].y += (-Bri*v[i].x*dt2 + v0*p[i].x*dt2)/m;
-		v[i].z += v0*p[i].z*dt2;
+		v[i].z += (v0*p[i].z*dt2)/m;
 
 		r[i] += dt2*v[i]; 
 			// half a time step in p space
@@ -127,7 +127,7 @@ void System::step(Ranq2 &ranNR )
 		Bri = bfield_ptr->f(r[i]);
 		v[i].x = eta.x +( Bri*eta.y*dt2 + v0*p[i].x*dt2)/m;
 		v[i].y = eta.y +(-Bri*eta.x*dt2 + v0*p[i].x*dt2)/m;
-		v[i].z = eta.z + v0*p[i].z*dt2;
+		v[i].z = eta.z + (v0*p[i].z*dt2)/m;
 
 
 	}
