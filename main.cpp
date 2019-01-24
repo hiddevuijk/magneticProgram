@@ -93,6 +93,8 @@ int main()
 	flux.writeZ("fz.dat");
 	flux.write_bins("f_bins.dat");
 
+	// write final configuration
+	system.write("final_config.dat");
 	return 0;
 }
 

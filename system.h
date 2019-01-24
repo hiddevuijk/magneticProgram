@@ -53,6 +53,9 @@ public:
 	// increment time
 	void step(Ranq2 &ranNR );
 
+
+	void write(const char* outname);
+	
 	// temporary containers
 	double Bri;
 	XYZ xi,eta,dp;	
@@ -60,6 +63,23 @@ public:
 
 };
 
+void System::write(const char* outname)
+{
+	std::ofstream out;
+	out.open(outname);
+	XYZ temp;
+	for(unsigned int i=0;i<N;++i) {
+		temp = r[i];
+		temp.pbc(L);	
+		out << temp.x << '\t';
+		out << temp.y << '\t';
+		out << temp.z;
+		if(i<(N-1)) out << '\n';
+	}
+
+	out.close();
+
+}
 void System::step(Ranq2 &ranNR )
 {
 	for(unsigned int i=0;i<N;++i) {
