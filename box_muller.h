@@ -7,7 +7,7 @@
 	a random bouble. (nr recipes)
 */
 
-#include <math.h>
+#include <cmath>
 
 template <typename RandomGenerator>
 double ndist(RandomGenerator& ran)
@@ -31,7 +31,7 @@ double ndist(RandomGenerator& ran)
 			x2 = 2.*ran.doub() - 1.;
 			w = x1*x1 + x2*x2;
 		} while(w>=1. || w == 0.);
-		w = sqrt((-2.*log(w))/w);
+		w = std::sqrt((-2.*std::log(w))/w);
 		y1 = x1*w;
 		y2 = x2*w;
 		useY2 = true;
