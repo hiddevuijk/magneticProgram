@@ -58,7 +58,7 @@ public:
 		B = BB; w=ww; }
 
 	double f(const XYZ& r) {
-			return B*std::sin(w*r.y); }
+			return B*std::sin(w*r.x); }
 
 };
 
