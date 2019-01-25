@@ -90,9 +90,9 @@ void System::step(Ranq2 &ranNR )
 		// deterministic forces onlyl
 		Bri = bfield_ptr->f(r[i]);
 
-		v[i].x += ( Bri*v[i].y*dt2 + v0*p[i].x*dt2)/m;
-		v[i].y += (-Bri*v[i].x*dt2 + v0*p[i].x*dt2)/m;
-		v[i].z += (v0*p[i].z*dt2)/m;
+		v[i].x += ( Bri*v[i].y + v0*p[i].x)*dt2/m;
+		v[i].y += (-Bri*v[i].x + v0*p[i].y)*dt2/m;
+		v[i].z += v0*p[i].z*dt2/m;
 
 		r[i] += dt2*v[i]; 
 			// half a time step in p space
@@ -109,7 +109,7 @@ void System::step(Ranq2 &ranNR )
 		system_func::xyz_random_normal(xi,ranNR);
 		eta = std::exp(-dt/m)*v[i] + 
 			std::sqrt( (1-std::exp(-2*dt/m))/m )*xi;	
-
+	
 
 		// make half a time step with eta 
 		// in stead of v
@@ -117,17 +117,17 @@ void System::step(Ranq2 &ranNR )
 
 			// half a time step in p space
 		if( v0 > 0) {
-			system_func::xyz_random_normal(eta,ranNR);
-			eta *= sqrt_dt_Dr;
-			dp = xyz::cross(eta,p[i]);
+			system_func::xyz_random_normal(xi,ranNR);
+			xi *= sqrt_dt_Dr;
+			dp = xyz::cross(xi,p[i]);
 			p[i] += dp;
 			p[i].normalize();
 		}
 
 		Bri = bfield_ptr->f(r[i]);
-		v[i].x = eta.x +( Bri*eta.y*dt2 + v0*p[i].x*dt2)/m;
-		v[i].y = eta.y +(-Bri*eta.x*dt2 + v0*p[i].x*dt2)/m;
-		v[i].z = eta.z + (v0*p[i].z*dt2)/m;
+		v[i].x = eta.x +( Bri*eta.y + v0*p[i].x)*dt2/m;
+		v[i].y = eta.y +(-Bri*eta.x + v0*p[i].y)*dt2/m;
+		v[i].z = eta.z + v0*p[i].z*dt2/m;
 
 
 	}
