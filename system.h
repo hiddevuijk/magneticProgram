@@ -58,7 +58,7 @@ public:
 	
 	// temporary containers
 	double Bri;
-	XYZ xi,eta,dp;	
+	XYZ xi,eta,dp,dv;	
 
 
 };
@@ -93,10 +93,11 @@ void System::step(Ranq2 &ranNR )
 		//r[i] += dr[i];
 		r[i] += v[i]*dt;
 
-		v[i].x += ( Bri*v[i].y*dt - v[i].x*dt + v0*p[i].x*dt + xi.x)/m;	
-		v[i].y += (-Bri*v[i].x*dt - v[i].y*dt + v0*p[i].y*dt + xi.y)/m;	
-		v[i].z += (-v[i].z*dt + v0*p[i].z*dt + xi.z)/m;
+		dv.x = ( Bri*v[i].y*dt - v[i].x*dt + v0*p[i].x*dt + xi.x)/m;	
+		dv.y = (-Bri*v[i].x*dt - v[i].y*dt + v0*p[i].y*dt + xi.y)/m;	
+		dv.z = (-v[i].z*dt + v0*p[i].z*dt + xi.z)/m;
 
+		v[i] += dv;
 		if( v0 > 0) {
 			
 			system_func::xyz_random_normal(eta,ranNR);
