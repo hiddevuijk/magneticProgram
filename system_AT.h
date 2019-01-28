@@ -127,11 +127,11 @@ void System::step(Ranq2 &ranNR )
 		}
 
 		Bri = bfield_ptr->f(r[i]);
-		dv.x = eta.x +( Bri*eta.y + v0*p[i].x)*dt2/m;
-		dv.y = eta.y +(-Bri*eta.x + v0*p[i].y)*dt2/m;
-		dv.z = eta.z + v0*p[i].z*dt2/m;
+		v[i].x = eta.x +( Bri*eta.y + v0*p[i].x)*dt2/m;
+		v[i].y = eta.y +(-Bri*eta.x + v0*p[i].y)*dt2/m;
+		v[i].z = eta.z + v0*p[i].z*dt2/m;
 
-		v[i] += dv;
+		//v[i] += dv;
 	}
 
 	t += dt;
