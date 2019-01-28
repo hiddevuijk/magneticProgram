@@ -33,13 +33,14 @@ int main()
 
 	// read system parameters
 	System system(config);
-
+	
 	// random number generator
 	Ranq2 ranNR(config.read<unsigned int>("seed"));
 
 	// start with random config. 
 	system.init_random(ranNR);
 
+	system.write("initial_config.dat");
 	// objects to sample density, orientation and flux
 	Density_xy density(int_params.bs,system.L);
 	Orientation_xy orientation(int_params.bs,system.L);
@@ -53,7 +54,7 @@ int main()
 			cout << (int_params.Nt_init + int_params.Nt) << '\t';
 			cout << ti << endl;
 		}
-		for(int tti=0; tti < int_params.t_unit; ++tti)		
+		for(unsigned int tti=0; tti < int_params.t_unit; ++tti)		
 			system.step(ranNR);		
 	}
 	cout << "Ended equilibration. Starting sampling ... \n";
@@ -64,7 +65,7 @@ int main()
 			cout << (int_params.Nt_init + int_params.Nt) << '\t';
 			cout << ti << endl;
 		}
-		for(int tti = 0;tti<int_params.t_unit;++tti)
+		for(unsigned int tti = 0;tti<int_params.t_unit;++tti)
 			system.step(ranNR);		
 
 		if( (ti%int_params.sample_freq) == 0 ) {
