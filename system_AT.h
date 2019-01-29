@@ -37,6 +37,9 @@ public:
 	double sqrt_dt_Dr;
 	double sqrt_2dt_Dr;
 
+	double e_dtm;
+	double sqrt_edtm;
+
 	double t;
 	std::vector<XYZ> r;
 	std::vector<XYZ> dr;
@@ -109,8 +112,9 @@ void System::step(Ranq2 &ranNR )
 		// make a full time step with stochastic
 		// and friction forces
 		system_func::xyz_random_normal(xi,ranNR);
-		eta = std::exp(-dt/m)*v[i] + 
-			std::sqrt( (1-std::exp(-2*dt/m))/m )*xi;	
+		//eta = std::exp(-dt/m)*v[i] + 
+		//	std::sqrt( (1-std::exp(-2*dt/m))/m )*xi;	
+		eta = e_dtm*v[i] + sqrt_edtm*xi;
 	
 
 		// make half a time step with eta 
@@ -155,6 +159,9 @@ System::System(ConfigFile config)
 	sqrt_dt_Dr = std::sqrt(dt*Dr);
 	sqrt_2dt_Dr = std::sqrt(2*dt*Dr);
 
+	e_dtm = std::exp(-dt/m);
+	sqrt_edtm = std::sqrt( (1-std::exp(-2*dt/m))/m );
+	
 	t = 0.0;
 	r = std::vector<XYZ>(N);
 	dr = std::vector<XYZ>(N);
