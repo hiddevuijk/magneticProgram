@@ -2,6 +2,9 @@
 
 same as magnetic but with a object oriented approach
 
+-- make exp(gamma ..) etc in stochastic update of system_AT
+	a const variable.
+
 -- implement XYZ functions in namcespace xyz
 
 
