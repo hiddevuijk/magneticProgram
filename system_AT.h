@@ -10,12 +10,14 @@
 #include "box_muller.h"
 
 #include <vector>
+#include <iostream>
 
 namespace system_func {
-inline void xyz_random_normal(XYZ &r, Ranq2 &ranNR) {
-	r.x = ndist(ranNR);
-	r.y = ndist(ranNR);
-	r.z = ndist(ranNR);
+template<class RNDIST> 
+inline void xyz_random_normal(XYZ &r, RNDIST &rndist) {
+	r.x = rndist();
+	r.y = rndist();
+	r.z = rndist();
 }
 };
 
@@ -53,10 +55,12 @@ public:
 	Bfield *bfield_ptr;
 
 	// initialize with random coordinates.
-	void init_random(Ranq2 &ranNR);
+	template<class RNDIST>
+	void init_random(RNDIST &ranNR);
 
 	// increment time
-	void step(Ranq2 &ranNR );
+	template<class RNDIST>
+	void step(RNDIST&ranNR );
 
 
 	void write(const char* outname);
@@ -85,7 +89,9 @@ void System::write(const char* outname)
 	out.close();
 
 }
-void System::step(Ranq2 &ranNR )
+
+template<class RNDIST>
+void System::step(RNDIST &rndist )
 {
 	for(unsigned int i=0;i<N;++i) {
 
@@ -102,7 +108,7 @@ void System::step(Ranq2 &ranNR )
 		r[i] += dt2*v[i]; 
 			// half a time step in p space
 		if( v0 > 0) {
-			system_func::xyz_random_normal(eta,ranNR);
+			system_func::xyz_random_normal(eta,rndist);
 			eta *= sqrt_dt_Dr;
 			dp = xyz::cross(eta,p[i]);
 			p[i] += dp;
@@ -111,7 +117,7 @@ void System::step(Ranq2 &ranNR )
 
 		// make a full time step with stochastic
 		// and friction forces
-		system_func::xyz_random_normal(xi,ranNR);
+		system_func::xyz_random_normal(xi,rndist);
 		//eta = std::exp(-dt/m)*v[i] + 
 		//	std::sqrt( (1-std::exp(-2*dt/m))/m )*xi;	
 		eta = e_dtm*v[i] + sqrt_edtm*xi;
@@ -123,7 +129,7 @@ void System::step(Ranq2 &ranNR )
 
 			// half a time step in p space
 		if( v0 > 0) {
-			system_func::xyz_random_normal(xi,ranNR);
+			system_func::xyz_random_normal(xi,rndist);
 			xi *= sqrt_dt_Dr;
 			dp = xyz::cross(xi,p[i]);
 			p[i] += dp;
@@ -175,29 +181,29 @@ System::System(ConfigFile config)
 	} else if( BType == "sineY" ) {
 		bfield_ptr = &fieldSineY;
 	} else {
-		cerr << "ERROR: " << BType << " is not a valid option.";
+		std::cerr << "ERROR: " << BType << " is not a valid option.";
 	}
 }
 
-
-void System::init_random(Ranq2 &ranNR)
+template<class RNDIST>
+void System::init_random(RNDIST &undist)
 {
 	XYZ zeta;
 	double d;
 	for(unsigned int i=0;i<N; ++i) {
-		r[i].x = ranNR.doub()*L;
-		r[i].y = ranNR.doub()*L;
-		r[i].z = ranNR.doub()*L;
+		r[i].x = undist()*L;
+		r[i].y = undist()*L;
+		r[i].z = undist()*L;
 
 		// check!!!!!!	
-		v[i].x = (ranNR.doub()-1.)/std::sqrt(m);
-		v[i].y = (ranNR.doub()-1.)/std::sqrt(m);
-		v[i].z = (ranNR.doub()-1.)/std::sqrt(m);
+		v[i].x = (undist()-1.)/std::sqrt(m);
+		v[i].y = (undist()-1.)/std::sqrt(m);
+		v[i].z = (undist()-1.)/std::sqrt(m);
 
 		do {
-			zeta.x = 2*ranNR.doub() - 1.;
-			zeta.y = 2*ranNR.doub() - 1.;
-			zeta.z = 2*ranNR.doub() - 1.;
+			zeta.x = 2*undist() - 1.;
+			zeta.y = 2*undist() - 1.;
+			zeta.z = 2*undist() - 1.;
 			d = zeta.length_sq();	
 		} while (d > 1.);
 		zeta.normalize();

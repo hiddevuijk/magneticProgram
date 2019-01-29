@@ -1,8 +1,8 @@
 
 #include "ConfigFile.h"
 
-#include "nr3.h"
-#include "ran.h"
+//#include "nr3.h"
+//#include "ran.h"
 
 #include "xyz.h"
 #include "bfield.h"
@@ -17,6 +17,7 @@
 #include <vector>
 #include <string>
 
+#include <boost/random.hpp>
 
 using namespace std;
 
@@ -35,10 +36,14 @@ int main()
 	System system(config);
 	
 	// random number generator
-	Ranq2 ranNR(config.read<unsigned int>("seed"));
+	boost::mt19937 rng(config.read<unsigned int>("seed"));
+	boost::normal_distribution<double> nd(0.0,1.0);
+	boost::variate_generator<boost::mt19937&,boost::normal_distribution<double> > rndist(rng,nd);
+	boost::uniform_real<double> ud(0.0,1.0);
+	boost::variate_generator<boost::mt19937&,boost::uniform_real<double> > rudist(rng,ud);
 
 	// start with random config. 
-	system.init_random(ranNR);
+	system.init_random(rudist);
 
 	system.write("initial_config.dat");
 	// objects to sample density, orientation and flux
@@ -55,7 +60,7 @@ int main()
 			cout << ti << endl;
 		}
 		for(unsigned int tti=0; tti < int_params.t_unit; ++tti)		
-			system.step(ranNR);		
+			system.step(rndist);		
 	}
 	cout << "Ended equilibration. Starting sampling ... \n";
 
@@ -66,7 +71,7 @@ int main()
 			cout << ti << endl;
 		}
 		for(unsigned int tti = 0;tti<int_params.t_unit;++tti)
-			system.step(ranNR);		
+			system.step(rndist);		
 
 		if( (ti%int_params.sample_freq) == 0 ) {
 			density.sample(system);
