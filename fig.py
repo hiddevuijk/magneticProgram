@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from sys import exit
 
 rho = np.loadtxt("rho.dat")
-bins = np.loadtxt("rho_bins.dat")
+bins = np.loadtxt("p_bins.dat")
 
 fx = np.loadtxt("fx.dat")
 fy = np.loadtxt("fy.dat")
@@ -14,8 +14,8 @@ py = np.loadtxt("py.dat")
 pz = np.loadtxt("pz.dat")
 
 plt.subplot(1,3,1)
-rhoY = np.mean(rho,axis=1)
-plt.plot(bins,rhoY)
+#rhoY = np.mean(rho,axis=1)
+#plt.plot(bins,rhoY)
 
 plt.subplot(1,3,2)
 fxY = np.mean(fx,axis=1)

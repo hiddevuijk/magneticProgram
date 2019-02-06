@@ -3,7 +3,7 @@
 
 #include "xyz.h"
 #include "bfield.h"
-#include "system_rn.h"
+#include "system.h"
 #include "density.h"
 #include "orientation.h"
 #include "flux.h"
@@ -77,6 +77,7 @@ int main()
 
 	// normalize and save orientation
 	orientation.normalize();
+	orientation.write("p.dat");
 	orientation.writeX("px.dat");
 	orientation.writeY("py.dat");
 	orientation.writeZ("pz.dat");

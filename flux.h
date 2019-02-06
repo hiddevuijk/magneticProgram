@@ -18,6 +18,7 @@ public:
 	void write_bins(std::ostream &out);
 
 	// write to file named outname
+	void write(const char* outname);
 	void writeX(const char* outname);
 	void writeY(const char* outname);
 	void writeZ(const char* outname);
@@ -117,6 +118,24 @@ void Flux_xy::writeZ(std::ostream &out)
 }
 
 
+void Flux_xy::write(const char* outname)
+{
+	std::ofstream out;
+	out.open(outname);
+
+	for(unsigned int jy=0;jy<Nbin;++jy) {
+		for(unsigned int jx=0;jx<Nbin;++jx) {
+			out << bins[jx] << '\t'
+				<< bins[jy] << '\t'
+				<< f[jx][jy].x << '\t'
+				<< f[jx][jy].y << '\t'
+				<< f[jx][jy].z << '\n';
+		}
+	}
+
+	out.close();
+
+}
 void Flux_xy::writeX(const char* outname)
 {
 	std::ofstream out;
@@ -189,6 +208,5 @@ void Flux_xy::write_bins(const char* outname)
 	out.close();
 
 }
-
 
 #endif

@@ -132,7 +132,6 @@ XYZ operator/ (const XYZ &r1, double div)
 // implement
 namespace xyz {
 
-
 	double dist(const XYZ &r1, const XYZ &r2);
 	double dist2(const XYZ &r1, const XYZ &r2);
 	double dist_pbc(const XYZ &r1, const XYZ &r2,double L);

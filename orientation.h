@@ -21,6 +21,7 @@ public:
 	void writeY(const char* outname);
 	void writeZ(const char* outname);
 	void write_bins(const char* outname);
+	void write(const char* outname);
 
 	unsigned int get_Nsample() {return Nsample;}
 
@@ -195,5 +196,23 @@ void Orientation_xy::write_bins(const char* outname)
 
 }
 
+void Orientation_xy::write(const char* outname)
+{
+	std::ofstream out;
+	out.open(outname);
+
+	for(unsigned int jy=0;jy<Nbin;++jy) {
+		for(unsigned int jx=0;jx<Nbin;++jx) {
+			out << bins[jx] << '\t'
+				<< bins[jy] << '\t'
+				<< p[jx][jy].x << '\t'
+				<< p[jx][jy].y << '\t'
+				<< p[jx][jy].z << '\n';
+		}
+	}
+
+	out.close();
+
+}
 
 #endif
