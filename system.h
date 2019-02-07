@@ -83,8 +83,40 @@ public:
 
 	// force on particle i due to the walls
 	std::vector<XYZ> Fwall;
-
+	// interaction force matrix
+	std::vector<XYZ> Fint;
+	void calculate_interactions();
+	XYZ force(int i, int j);
+	double rco;
+	double sigma;
+	double epsilon;
 };
+
+XYZ System::force(int i,int j)
+{
+	XYZ d = r[j] - r[i];
+	double dist = sqrt(d.x*d.x+d.y*d.y+d.z*d.z);
+	double d6,f;
+	if(dist < rco) {
+		d6 = sigma/dist;
+		d6 = d6*d6*d6*d6*d6*d6;
+		f = 48*epsilon/(dist*dist);
+		f *= d6*(d6-0.5);
+	}
+	return f*d;
+}
+void System::calculate_interactions()
+{
+	XYZ f;
+	std::fill(Fint.begin(),Fint.end(),XYZ(0,0,0));	
+	for(unsigned int i=0; i<(N-1) ;++i) {
+		for(unsigned int j=i+1;j<N;++j) {
+			f = force(i,j);
+			Fint[i] += f;
+			Fint[j] -= f;
+		}
+	}
+}
 
 void System::write(const char* outname)
 {
@@ -111,16 +143,19 @@ void System::step()
 	for(unsigned int i=0;i<N;++i) {
 
 		Bri = bfield_ptr->f(r[i]);
-		
+
+		calculate_interactions();
+	
 		system_func::xyz_random_normal(xi,rndist); xi *= sqrt_2dt;
 
 		r[i] += v[i]*dt;
 
-		dv.x = ( Bri*v[i].y*dt - v[i].x*dt + 
+		dv.x = ( Bri*v[i].y*dt - v[i].x*dt + Fint[i].x*dt +
 				Fwall[i].x*dt + v0*p[i].x*dt + xi.x)/m;	
-		dv.y = (-Bri*v[i].x*dt - v[i].y*dt +
+		dv.y = (-Bri*v[i].x*dt - v[i].y*dt + Fint[i].y*dt +
 				Fwall[i].y*dt + v0*p[i].y*dt + xi.y)/m;	
-		dv.z = (-v[i].z*dt + Fwall[i].z*dt + v0*p[i].z*dt + xi.z)/m;
+		dv.z = (-v[i].z*dt + Fwall[i].z*dt + Fint[i].z*dt +
+				v0*p[i].z*dt + xi.z)/m;
 
 		v[i] += dv;
 	
@@ -180,8 +215,8 @@ System::System(ConfigFile config)
 	wallType = config.read<std::string>("WallType");
 
 	nowall = NoWall();
-	sqwall = SquareWall(config.read<double>("sigma"),
-			config.read<double>("epsilon"),
+	sqwall = SquareWall(config.read<double>("sigmaW"),
+			config.read<double>("epsilonW"),
 			config.read<double>("L") );
 
 	if( wallType == "none") {
@@ -191,6 +226,12 @@ System::System(ConfigFile config)
 	}
 
 	Fwall = std::vector<XYZ>(N,XYZ(0,0,0));
+	Fint = std::vector<XYZ>(N,XYZ(0,0,0));
+
+	epsilon = config.read<double>("epsilon");
+	sigma = config.read<double>("sigma");	
+	rco = sigma*pow(2.,1./6.);
+
 }
 
 void System::init_random()
@@ -201,10 +242,30 @@ void System::init_random()
 	}
 	XYZ zeta;
 	double d;
+
+	// node_pd: nodes per dim
+	int node_pd = ceil(pow(1.*N,1./3));
+	int Nnodes = node_pd*node_pd*node_pd;
+	double node_dist = (L-2*l)/node_pd;
+	
+	std::vector<XYZ> nodes(Nnodes);
+	int i=0;
+	for(int xi =0;xi<node_pd;++xi) {
+		for(int yi=0;yi<node_pd;++yi) {
+			for(int zi=0;zi<node_pd;++zi) {
+				nodes[i].x = l+xi*node_dist;
+				nodes[i].y = l+yi*node_dist;
+				nodes[i].z = l+zi*node_dist;
+				++i;
+			}
+		}
+	}
 	for(unsigned int i=0;i<N; ++i) {
-		r[i].x = l+rudist()*(L-2*l);
-		r[i].y = l+rudist()*(L-2*l);
-		r[i].z = l+rudist()*(L-2*l);
+		// pick a random node
+		int ni =  (int)( rudist()*nodes.size() );			
+		r[i] = nodes[ni];
+		nodes.erase(nodes.begin()+ni); // remove node
+
 
 		// check!!!!!!	
 		v[i].x = (rudist()-1.)/std::sqrt(m);

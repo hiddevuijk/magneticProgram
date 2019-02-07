@@ -35,13 +35,14 @@ int main()
 	
 	// start with random config. 
 	system.init_random();
-
 	system.write("initial_config.dat");
+
 	// objects to sample density, orientation and flux
 	Density_xy density(int_params.bs,system.L,system.N);
 	Orientation_xy orientation(int_params.bs,system.L);
 	Flux_xy flux(int_params.bs,system.L,system.N);
 	Pressure pressure(int_params.bs,system.L,system.N);
+
 	// integrate Nt_init time steps
 	unsigned int ti;
 	cout << "Starting with equilibration ...\n";
