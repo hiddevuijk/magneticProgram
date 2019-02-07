@@ -3,10 +3,12 @@
 
 #include "xyz.h"
 #include "bfield.h"
+#include "walls.h"
 #include "system.h"
 #include "density.h"
 #include "orientation.h"
 #include "flux.h"
+#include "pressure.h"
 
 #include <iostream>
 #include <iomanip>
@@ -39,6 +41,7 @@ int main()
 	Density_xy density(int_params.bs,system.L);
 	Orientation_xy orientation(int_params.bs,system.L);
 	Flux_xy flux(int_params.bs,system.L);
+	Pressure pressure(int_params.bs,system.L);
 
 	// integrate Nt_init time steps
 	unsigned int ti;
@@ -62,6 +65,7 @@ int main()
 		for(unsigned int tti = 0;tti<int_params.t_unit;++tti)
 			system.step();		
 
+		//pressure.sample(system);
 		if( (ti%int_params.sample_freq) == 0 ) {
 			density.sample(system);
 			orientation.sample(system);
@@ -89,6 +93,11 @@ int main()
 	flux.writeY("fy.dat");
 	flux.writeZ("fz.dat");
 	flux.write_bins("f_bins.dat");
+
+	// normalize and save pressure
+	pressure.normalize(system);
+	pressure.writeX("pressureX.dat");
+	pressure.writeY("pressureY.dat");
 
 	// write final configuration
 	system.write("final_config.dat");

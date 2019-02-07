@@ -7,6 +7,7 @@
 
 #include "xyz.h"
 #include "bfield.h"
+#include "walls.h"
 
 #include <iostream>
 #include <vector>
@@ -59,8 +60,16 @@ public:
 
 	Bfield *bfield_ptr;
 
+	std::string wallType;
+	NoWall nowall;
+	SquareWall sqwall;
+
+	Wall *wall_ptr;
+
+
 	// initialize with random coordinates.
 	void init_random();
+	void init_random(double);
 
 	// increment time
 	void step();
@@ -71,6 +80,8 @@ public:
 	double Bri;
 	XYZ xi,eta,dp,dv;	
 
+	// force on particle i due to the walls
+	std::vector<XYZ> Fwall;
 
 };
 
@@ -98,17 +109,22 @@ void System::step()
 {
 	for(unsigned int i=0;i<N;++i) {
 
-		Bri = bfield_ptr->f(r[i]);
+		Bri = 0*bfield_ptr->f(r[i]);
 
 		system_func::xyz_random_normal(xi,rndist); xi *= sqrt_2dt;
 
 		r[i] += v[i]*dt;
 
-		dv.x = ( Bri*v[i].y*dt - v[i].x*dt + v0*p[i].x*dt + xi.x)/m;	
-		dv.y = (-Bri*v[i].x*dt - v[i].y*dt + v0*p[i].y*dt + xi.y)/m;	
-		dv.z = (-v[i].z*dt + v0*p[i].z*dt + xi.z)/m;
+		dv.x = ( Bri*v[i].y*dt - v[i].x*dt + 
+				Fwall[i].x*dt + v0*p[i].x*dt + xi.x)/m;	
+		dv.y = (-Bri*v[i].x*dt - v[i].y*dt +
+				Fwall[i].y*dt + v0*p[i].y*dt + xi.y)/m;	
+		dv.z = (-v[i].z*dt + Fwall[i].z*dt + v0*p[i].z*dt + xi.z)/m;
 
 		v[i] += dv;
+	
+		Fwall[i] = wall_ptr->f(r[i]);
+
 		if( v0 > 0) {
 			
 			system_func::xyz_random_normal(eta,rndist);
@@ -131,7 +147,7 @@ System::System(ConfigFile config)
 	ndist(0.,1.),udist(0,1),
 	seed(config.read<unsigned int>("seed")),
 	rng(seed), rndist(rng,ndist), rudist(rng,udist),
- noField(), fieldSineY(config.read<double>("B"), config.read<double>("w") )
+	noField(), fieldSineY(config.read<double>("B"),config.read<double>("w") )
 {
 	XYZ rr;
 	N = config.read<unsigned int>("N");
@@ -156,17 +172,35 @@ System::System(ConfigFile config)
 	} else if( BType == "sineY" ) {
 		bfield_ptr = &fieldSineY;
 	}
-}
 
+	wallType = config.read<std::string>("WallType");
+
+	nowall = NoWall();
+	sqwall = SquareWall(config.read<double>("sigma"),
+			config.read<double>("epsilon"),
+			config.read<double>("L") );
+
+	if( wallType == "none") {
+		wall_ptr = &nowall;
+	} else if( wallType == "square") {
+		wall_ptr = &sqwall;
+	}
+
+	Fwall = std::vector<XYZ>(N,XYZ(0,0,0));
+}
 
 void System::init_random()
 {
+	double l = 0.;
+	if(wallType == "square") {
+		l = wall_ptr->get_sigma()*pow(2.,1./6.);
+	}
 	XYZ zeta;
 	double d;
 	for(unsigned int i=0;i<N; ++i) {
-		r[i].x = rudist()*L;
-		r[i].y = rudist()*L;
-		r[i].z = rudist()*L;
+		r[i].x = l+rudist()*(L-2*l);
+		r[i].y = l+rudist()*(L-2*l);
+		r[i].z = l+rudist()*(L-2*l);
 
 		// check!!!!!!	
 		v[i].x = (rudist()-1.)/std::sqrt(m);
