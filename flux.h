@@ -5,11 +5,11 @@
 class Flux_xy {
 
 public:
-	Flux_xy(double bs, double max);
+	Flux_xy(double bs, double max,int Nparticles);
 
 	void sample(const System &system);
 
-	void normalize(const System &system);
+	void normalize();
  
 	// write to out stream
 	void writeX(std::ostream &out);
@@ -34,10 +34,11 @@ private:
 	std::vector<double> bins;
 
 	unsigned int Nsample;
+	unsigned int N; // number of particles
 };
 
 
-Flux_xy::Flux_xy(double bss,double max)
+Flux_xy::Flux_xy(double bss,double max, int Nparticles)
 {
 	bs = bss;
 	Nbin = (unsigned int) std::ceil(max/bs);
@@ -49,6 +50,7 @@ Flux_xy::Flux_xy(double bss,double max)
 	for(unsigned int i=0;i<Nbin;++i)
 		bins[i] = (i+0.5)*bs;
 	Nsample = 0;
+	N = Nparticles;
 }	
 
 
@@ -73,9 +75,9 @@ void Flux_xy::sample(const System &system)
 		
 }
 
-void Flux_xy::normalize(const System &system) 
+void Flux_xy::normalize() 
 {
-	double norm = 1./(Nsample*system.N*bs*bs);
+	double norm = 1./(Nsample*N*bs*bs);
 	for(unsigned int jx = 0;jx < Nbin; ++jx ) {
 		for(unsigned int jy = 0;jy < Nbin; ++jy ) {
 			f[jx][jy] *= norm;

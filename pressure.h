@@ -11,12 +11,12 @@
 
 class Pressure {
 public:
-	Pressure(double bs, double L);	
+	Pressure(double bs, double L, int N);	
 	
 
 	void sample(const System &system);
 
-	void normalize(const System &system);
+	void normalize();
 
 	// write to out stream
 	void write_bins(std::ostream &out);
@@ -39,10 +39,11 @@ private:
 	std::vector<double> bins;
 
 	unsigned int Nsample;
+	int N; // number of particles
 
 };
 
-Pressure::Pressure(double bss,double max)
+Pressure::Pressure(double bss,double max, int Nparticles)
 {
 	bs = bss;
 	Nbin = (unsigned int) std::ceil(max/bs);
@@ -53,6 +54,7 @@ Pressure::Pressure(double bss,double max)
 	for(unsigned int i=0;i<Nbin;++i)
 		bins[i] = (i+0.5)*bs;
 	Nsample = 0;
+	N = Nparticles; 
 }	
 
 
@@ -81,9 +83,9 @@ void Pressure::sample(const System &system)
 
 
 
-void Pressure::normalize(const System &system) 
+void Pressure::normalize() 
 {
-	double norm = 1./(system.N*Nsample);
+	double norm = 1./(N*Nsample);
 	for(unsigned int jx = 0;jx < Nbin; ++jx ) {
 		for(unsigned int jy = 0;jy < Nbin; ++jy ) {
 			Fxy[jx][jy] *= norm;

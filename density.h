@@ -12,11 +12,11 @@
 
 class Density_xy {
 public:
-	Density_xy( double bs, double max);	
+	Density_xy( double bs, double max, int Nparticles);	
 
 	void sample(const System &system);
 
-	void normalize(const System &system);
+	void normalize();
 
 	// write to out stream
 	void write(std::ostream &out);
@@ -37,10 +37,10 @@ private:
 	std::vector<double> bins;
 
 	unsigned int Nsample;
-
+	unsigned int N; // number of particles
 };
 
-Density_xy::Density_xy(double bss,double max)
+Density_xy::Density_xy(double bss,double max,int Nparticles)
 {
 	bs = bss;
 	Nbin = (unsigned int) std::ceil(max/bs);
@@ -51,6 +51,7 @@ Density_xy::Density_xy(double bss,double max)
 	for(unsigned int i=0;i<Nbin;++i)
 		bins[i] = (i+0.5)*bs;
 	Nsample = 0;
+	N = Nparticles;
 }	
 
 
@@ -79,9 +80,9 @@ void Density_xy::sample(const System &system)
 
 
 
-void Density_xy::normalize(const System &system) 
+void Density_xy::normalize() 
 {
-	double norm = 1./(bs*bs*system.N*Nsample);
+	double norm = 1./(bs*bs*N*Nsample);
 	for(unsigned int jx = 0;jx < Nbin; ++jx ) {
 		for(unsigned int jy = 0;jy < Nbin; ++jy ) {
 			rho[jx][jy] *= norm;
