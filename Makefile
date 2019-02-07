@@ -9,8 +9,8 @@ LFALGS = -Wall -O3 -DNDEBUG
 $(TARGET): $(OBJS)
 	$(CC) $(LFLAGS)  $(OBJS) -o $(TARGET)
 
-main.o: main.cpp xyz.h bfield.h \
-	 system.h density.h orientation.h flux.h
+main.o: main.cpp xyz.h bfield.h walls.h \
+	 pressure.h system.h density.h orientation.h flux.h
 	$(CC) $(CFLAGS) main.cpp
 
 
