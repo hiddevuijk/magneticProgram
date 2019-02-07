@@ -1,6 +1,7 @@
 #ifndef GUARD_ORIENTATION_H
 #define GUARD_ORIENTATION_H
 
+#include "xyz.h"
 
 class Orientation_xy {
 public:
@@ -60,16 +61,22 @@ Orientation_xy::Orientation_xy(double bss,double max)
 void Orientation_xy::sample(const System &system)
 {
 	++Nsample;
-	double x,y;
+	//double x,y;
+	XYZ r;
 	unsigned int jx,jy;
 	for(unsigned int i=0;i<system.N;++i ) {
-		x = system.r[i].x;
-		x -= system.L*std::floor(x/system.L);
-		jx = std::floor(x/bs);
+		r = system.r[i];
+		r.pbc(system.L);
+		jx = std::floor(r.x/bs);
+		jy = std::floor(r.y/bs);
 
-		y = system.r[i].y;
-		y -= system.L*std::floor(y/system.L);	
-		jy = std::floor(y/bs);
+		//x = system.r[i].x;
+		//x -= system.L*std::floor(x/system.L);
+		//jx = std::floor(x/bs);
+
+		//y = system.r[i].y;
+		//y -= system.L*std::floor(y/system.L);	
+		//jy = std::floor(y/bs);
 
 		if((jx<Nbin) && (jy<Nbin) ) 
 			p[jx][jy] += system.p[i];
