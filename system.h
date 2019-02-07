@@ -56,7 +56,8 @@ public:
 	
 	
 	BNone noField;
-	BsinY fieldSineY;
+	Bsin fieldSine;
+	Bhill fieldHill;
 
 	Bfield *bfield_ptr;
 
@@ -109,8 +110,8 @@ void System::step()
 {
 	for(unsigned int i=0;i<N;++i) {
 
-		Bri = 0*bfield_ptr->f(r[i]);
-
+		Bri = bfield_ptr->f(r[i]);
+		
 		system_func::xyz_random_normal(xi,rndist); xi *= sqrt_2dt;
 
 		r[i] += v[i]*dt;
@@ -147,7 +148,8 @@ System::System(ConfigFile config)
 	ndist(0.,1.),udist(0,1),
 	seed(config.read<unsigned int>("seed")),
 	rng(seed), rndist(rng,ndist), rudist(rng,udist),
-	noField(), fieldSineY(config.read<double>("B"),config.read<double>("w") )
+	noField(), fieldSine(config.read<double>("B"),config.read<double>("w") ),
+	fieldHill(config.read<double>("B"),config.read<double>("L"))
 {
 	XYZ rr;
 	N = config.read<unsigned int>("N");
@@ -169,8 +171,10 @@ System::System(ConfigFile config)
 
 	if( BType == "none") {
 		bfield_ptr = &noField;	
-	} else if( BType == "sineY" ) {
-		bfield_ptr = &fieldSineY;
+	} else if( BType == "sine" ) {
+		bfield_ptr = &fieldSine;
+	} else if( BType == "hill" ) {
+		bfield_ptr = &fieldHill;
 	}
 
 	wallType = config.read<std::string>("WallType");

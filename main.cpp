@@ -38,11 +38,10 @@ int main()
 
 	system.write("initial_config.dat");
 	// objects to sample density, orientation and flux
-	Density_xy density(int_params.bs,system.L);
+	Density_xy density(int_params.bs,system.L,system.N);
 	Orientation_xy orientation(int_params.bs,system.L);
-	Flux_xy flux(int_params.bs,system.L);
-	Pressure pressure(int_params.bs,system.L);
-
+	Flux_xy flux(int_params.bs,system.L,system.N);
+	Pressure pressure(int_params.bs,system.L,system.N);
 	// integrate Nt_init time steps
 	unsigned int ti;
 	cout << "Starting with equilibration ...\n";
@@ -52,7 +51,8 @@ int main()
 			cout << ti << endl;
 		}
 		for(unsigned int tti=0; tti < int_params.t_unit; ++tti)		
-			system.step();		
+			system.step();
+		
 	}
 	cout << "Ended equilibration. Starting sampling ... \n";
 
@@ -75,7 +75,7 @@ int main()
 
 	cout << "Simulation finished.\nNormalizing and writing results ..." << endl;
 	// normalize and save density
-	density.normalize(system);
+	density.normalize();
 	density.write("rho.dat");
 	density.write_bins("rho_bins.dat");
 
@@ -88,14 +88,14 @@ int main()
 	orientation.write_bins("p_bins.dat");
 
 	// normalize and save flux
-	flux.normalize(system);
+	flux.normalize();
 	flux.writeX("fx.dat");
 	flux.writeY("fy.dat");
 	flux.writeZ("fz.dat");
 	flux.write_bins("f_bins.dat");
 
 	// normalize and save pressure
-	pressure.normalize(system);
+	pressure.normalize();
 	pressure.writeX("pressureX.dat");
 	pressure.writeY("pressureY.dat");
 
