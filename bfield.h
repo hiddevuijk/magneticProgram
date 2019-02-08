@@ -52,6 +52,29 @@ public:
 	}
 };
 
+class Blin: public BfieldAll {
+public:
+	Blin() { B = 0;}
+	Blin(double BB) {B = BB; }
+
+	double f(const XYZ& r) {
+		return r.x*B;
+	}
+};
+
+
+class BlinAsym: public BfieldAll {
+public:
+	BlinAsym() { B = 0;}
+	BlinAsym(double BB,double LL) {B = BB; L=LL;}
+
+	double f(const XYZ& r) {
+		return r.x*B - B*0.5*L;
+	}
+};
+
+
+
 class Bfield {
 public:
 	Bfield();
@@ -66,7 +89,9 @@ private:
 	BNone bnone;
 	BSine bsine;
 	Bhill bhill;
-		
+	Blin  blin;
+	BlinAsym blinasym;
+	
 	BfieldAll *bfield_ptr;
 };
 
@@ -83,7 +108,8 @@ Bfield::Bfield()
 Bfield::Bfield(double B, double w, double L,
 			std::string BType)
 :
-	bnone(), bsine(B,w), bhill(B,L)
+	bnone(), bsine(B,w), bhill(B,L),
+	blin(B), blinasym(B,L)
 {
 	if( BType == "none") {
 		bfield_ptr = &bnone;	
@@ -91,6 +117,10 @@ Bfield::Bfield(double B, double w, double L,
 		bfield_ptr = &bsine;
 	} else if( BType == "hill" ) {
 		bfield_ptr = &bhill;
+	} else if( BType == "linear") {
+		bfield_ptr = &blin;
+	} else if( BType == "linearAsym") {
+		bfield_ptr = & blinasym;
 	} else {
 		std::cerr << "ERROR: " << BType
 			<< " is not a valid option.\n";
