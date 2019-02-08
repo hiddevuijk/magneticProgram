@@ -69,6 +69,27 @@ public:
 };
 
 
+class TubeWall: public WallAll {
+public:
+	TubeWall() {};
+	TubeWall(double sigg, double epss, double l)
+		 {	sig = sigg; eps = epss;
+			rWCA = sigg*pow(2.,1./6.); 
+			L_minus_rWCA = l-rWCA; L = l;}
+
+	XYZ f(const XYZ& r)
+	{
+		XYZ Fwall(0,0,0);
+		if(r.x>L_minus_rWCA) {
+			Fwall.x = -flj(L-r.x);
+		} else if(r.x<rWCA) {
+			Fwall.x = flj(r.x);
+		}
+
+		return Fwall;
+	}
+};
+
 
 class Wall {
 public:
@@ -86,6 +107,7 @@ public:
 private:
 	NoWall nowall;
 	SquareWall squarewall;
+	TubeWall tubewall;
 
 	WallAll *wall_ptr;
 
@@ -95,13 +117,16 @@ private:
 Wall::Wall(double sig, double eps, double L,
 			std::string wallName)
 :	nowall(),
-	squarewall(sig,eps,L)
+	squarewall(sig,eps,L),
+	tubewall(sig,eps,L)
 {
 
 	if(wallName == "none") {
 		wall_ptr = &nowall;
 	} else if(wallName == "square") {
 		wall_ptr = &squarewall;
+	} else if(wallName == "tube") {
+		wall_ptr = &tubewall;
 	} else {
 		std::cerr << "ERROR: " << wallName
 			<< " is not a valid option.\n";
