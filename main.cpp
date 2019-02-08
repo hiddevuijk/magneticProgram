@@ -47,26 +47,31 @@ int main()
 	unsigned int ti;
 	cout << "Starting with equilibration ...\n";
 	for( ti = 0; ti < int_params.Nt_init; ++ ti) {
+		// print progress
 		if( (ti%int_params.print_freq) == 0 ) {
 			cout << (int_params.Nt_init + int_params.Nt) << '\t';
 			cout << ti << endl;
 		}
+		// make t_unit time steps
 		for(unsigned int tti=0; tti < int_params.t_unit; ++tti)		
 			system.step();
 		
 	}
+
 	cout << "Ended equilibration. Starting sampling ... \n";
 
-
 	for(; ti < (int_params.Nt+int_params.Nt_init); ++ti) {
+		// print progress 
 		if( (ti%int_params.print_freq) == 0 ) {
 			cout << (int_params.Nt_init + int_params.Nt) << '\t';
 			cout << ti << endl;
 		}
+
+		// make t_unit time steps
 		for(unsigned int tti = 0;tti<int_params.t_unit;++tti)
 			system.step();		
 
-		//pressure.sample(system);
+		pressure.sample(system);
 		if( (ti%int_params.sample_freq) == 0 ) {
 			density.sample(system);
 			orientation.sample(system);
