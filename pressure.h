@@ -65,7 +65,7 @@ void Pressure::sample(const System &system)
 
 	++Nsample;
 	// if there is a wall, calculate force
-	if(system.wallType != "none") {
+	if(system.wall.get_epsilon() != 0) {
 		XYZ r;
 		unsigned int jx,jy;
 		for(unsigned int i=0;i<system.N;++i ) {
