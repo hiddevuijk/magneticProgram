@@ -1,30 +1,30 @@
 #system parameters
-N = 50
-L = 5.
-m = 0.02
-v0 = 20.
-Dr = 20.
+N = 500
+L = 10.
+m = 0.002
+v0 = 30.
+Dr = 1.
 seed = 213436789
 
 #magnetic field parameters
-BType = sine
+BType = linearAsym
 B = 4.
 w = 0.6283185307179586
 
 #interaction parameters
-sigma = .5
-epsilon = 1.
+sigma = 1.
+epsilon = 0.
 
 #wall parameters
-WallType = square
+WallType = tube
 sigmaW = .25
 epsilonW = 1.
 
 #integration parameter
-Nt_init = 10
-Nt = 10
+Nt_init = 1000
+Nt = 10000
 sample_freq = 1
-print_freq = 100
+print_freq = 1000
 t_unit = 1000;
 dt = 0.000005
 bs = .5

@@ -1,10 +1,10 @@
 TARGET = test.exe
 OBJS = main.o 
 CC = g++
-CFLAGS = -c -Wall  -g
-LFLAGS = -Wall  -g
-#CFLAGS = -c -Wall -O3 -DNDEBUG
-#LFALGS = -Wall -O3 -DNDEBUG
+#CFLAGS = -c -Wall  -g
+#LFLAGS = -Wall  -g
+CFLAGS = -c -Wall -O3 -DNDEBUG
+LFALGS = -Wall -O3 -DNDEBUG
 
 $(TARGET): $(OBJS)
 	$(CC) $(LFLAGS)  $(OBJS) -o $(TARGET)
