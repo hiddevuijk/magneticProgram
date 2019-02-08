@@ -32,7 +32,8 @@ int main()
 
 	// read system parameters
 	System system(config);
-	
+
+
 	// start with random config. 
 	system.init_random();
 	system.write("initial_config.dat");
