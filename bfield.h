@@ -1,30 +1,33 @@
 #ifndef GUARD_BFIELD_H
 #define GUARD_BFIELD_H
 
-#include <vector>
 #include "xyz.h"
 
-class Bfield {
+#include <iostream>
+#include <vector>
+
+class BfieldAll {
 public:
 	virtual double f(const XYZ& r) = 0; 
 
 protected:
 	double B;
-	double B0;
 	double w;
-	double wt;
 	double L;
 };
 
-class BNone: public Bfield {
+class BNone: public BfieldAll {
+public:
+	BNone() {B = 0;}
 	double f(const XYZ& r)
 			{return 0;}
 };
 
 
-class Bsin: public Bfield {
+class BSine: public BfieldAll {
 public:
-	Bsin(double BB, double ww) {
+	BSine() { B = 0.; }
+	BSine(double BB, double ww) {
 		B = BB; w=ww; }
 
 	double f(const XYZ& r) {
@@ -32,8 +35,9 @@ public:
 
 };
 
-class Bhill: public Bfield {
+class Bhill: public BfieldAll {
 public:
+	Bhill() { B = 0;}
 	Bhill(double BB, double LL) {
 		B = BB; L = LL; }
 
@@ -47,6 +51,53 @@ public:
 		} 
 	}
 };
+
+class Bfield {
+public:
+	Bfield();
+
+	Bfield(double B, double w, double L,
+			std::string BType);
+
+	double get_field(const XYZ& r) const
+		{return bfield_ptr->f(r);}
+
+private:
+	BNone bnone;
+	BSine bsine;
+	Bhill bhill;
+		
+	BfieldAll *bfield_ptr;
+};
+
+
+
+Bfield::Bfield()
+:
+	bnone(), bsine(), bhill()
+{
+	bfield_ptr = &bnone;
+}
+
+
+Bfield::Bfield(double B, double w, double L,
+			std::string BType)
+:
+	bnone(), bsine(B,w), bhill(B,L)
+{
+	if( BType == "none") {
+		bfield_ptr = &bnone;	
+	} else if( BType == "sine" ) {
+		bfield_ptr = &bsine;
+	} else if( BType == "hill" ) {
+		bfield_ptr = &bhill;
+	} else {
+		std::cerr << "ERROR: " << BType
+			<< " is not a valid option.\n";
+	}
+
+
+}
 
 #endif
 

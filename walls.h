@@ -4,8 +4,12 @@
 
 #include <math.h>
 #include <iostream>
+#include <string>
 
-class Wall {
+
+
+
+class WallAll {
 public:
 	virtual XYZ f( const XYZ& r) = 0;
 
@@ -16,7 +20,8 @@ public:
 		return 24*eps*dist6*(2*dist6-1)/dist;
 		}
 
-	double get_sigma() {return sig;}
+	double get_sigma() const {return sig;}
+	double get_epsilon() const {return eps;}
 protected:
 	double L;
 
@@ -26,14 +31,16 @@ protected:
 	double L_minus_rWCA;
 };
 
-class NoWall: public Wall {
+class NoWall: public WallAll {
 	XYZ f(const XYZ& r)
 		{ XYZ Fwall(0,0,0);
 			return Fwall;
 		}
+	double get_sigma() const { return 0.;}
+	double get_epsilon() const {return 0.;}
 };
 
-class SquareWall: public Wall {
+class SquareWall: public WallAll {
 public:
 	SquareWall() {};
 	SquareWall(double sigg, double epss, double l)
@@ -60,5 +67,52 @@ public:
 		return Fwall;
 	}
 };
+
+
+
+class Wall {
+public:
+	Wall();
+	Wall(double sig, double eps, double L,
+		std::string wallName);
+
+	XYZ wallForce(const XYZ &r) const
+		{ return wall_ptr->f(r); }
+
+	double get_epsilon() const
+		{ return wall_ptr->get_epsilon();}
+	double get_sigma() const
+		{return wall_ptr->get_sigma(); }
+private:
+	NoWall nowall;
+	SquareWall squarewall;
+
+	WallAll *wall_ptr;
+
+
+};
+
+Wall::Wall(double sig, double eps, double L,
+			std::string wallName)
+:	nowall(),
+	squarewall(sig,eps,L)
+{
+
+	if(wallName == "none") {
+		wall_ptr = &nowall;
+	} else if(wallName == "square") {
+		wall_ptr = &squarewall;
+	} else {
+		std::cerr << "ERROR: " << wallName
+			<< " is not a valid option.\n";
+	}
+}	
+
+Wall::Wall()
+:	nowall(),
+	squarewall(0,0,0)
+{
+	wall_ptr = &nowall;
+}
 
 #endif

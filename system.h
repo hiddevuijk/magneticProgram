@@ -8,6 +8,7 @@
 #include "xyz.h"
 #include "bfield.h"
 #include "walls.h"
+#include "interactions.h"
 
 #include <iostream>
 #include <vector>
@@ -20,6 +21,7 @@ inline void xyz_random_normal(XYZ &r, RNDIST &rndist) {
 	r.y = rndist();
 	r.z = rndist();
 }
+
 };
 
 struct System {
@@ -27,6 +29,7 @@ public:
 	// initialize from ConfigFile object
 	System(ConfigFile config);
 
+	// random number generator
 	const boost::normal_distribution<double> ndist;
 	const boost::uniform_real<double> udist;
 
@@ -37,6 +40,7 @@ public:
 	boost::variate_generator<boost::mt19937&,
 		boost::uniform_real<double> > rudist;
 
+	// fixed system parameters
 	unsigned int N;
 	double L;
 	double m;
@@ -44,29 +48,30 @@ public:
 	double Dr;
 	double dt;
 
-
 	double sqrt_2dt;
 	double sqrt_2dt_Dr;
 
+	// state of the system
 	double t;
 	std::vector<XYZ> r;
 	std::vector<XYZ> dr;
 	std::vector<XYZ> v;
 	std::vector<XYZ> p;
 	
-	
-	BNone noField;
-	Bsin fieldSine;
-	Bhill fieldHill;
+	// magnetic field	
+	Bfield bfield;
 
-	Bfield *bfield_ptr;
+	// walls 
+	Wall wall;
 
-	std::string wallType;
-	NoWall nowall;
-	SquareWall sqwall;
+	// force on particle i due to the walls
+	std::vector<XYZ> Fwall;
 
-	Wall *wall_ptr;
-
+	// interactions object
+	Interactions interactions;
+	// interaction force matrix
+	std::vector<XYZ> Fint;
+	int ti;
 
 	// initialize with random coordinates.
 	void init_random();
@@ -81,74 +86,26 @@ public:
 	double Bri;
 	XYZ xi,eta,dp,dv;	
 
-	// force on particle i due to the walls
-	std::vector<XYZ> Fwall;
-	// interaction force matrix
-	std::vector<XYZ> Fint;
-	void calculate_interactions();
-	XYZ force(int i, int j);
-	double rco;
-	double sigma;
-	double epsilon;
+
 };
-
-XYZ System::force(int i,int j)
-{
-	XYZ d = r[j] - r[i];
-	double dist = sqrt(d.x*d.x+d.y*d.y+d.z*d.z);
-	double d6,f;
-	if(dist < rco) {
-		d6 = sigma/dist;
-		d6 = d6*d6*d6*d6*d6*d6;
-		f = 48*epsilon/(dist*dist);
-		f *= d6*(d6-0.5);
-	}
-	return f*d;
-}
-void System::calculate_interactions()
-{
-	XYZ f;
-	std::fill(Fint.begin(),Fint.end(),XYZ(0,0,0));	
-	for(unsigned int i=0; i<(N-1) ;++i) {
-		for(unsigned int j=i+1;j<N;++j) {
-			f = force(i,j);
-			Fint[i] += f;
-			Fint[j] -= f;
-		}
-	}
-}
-
-void System::write(const char* outname)
-{
-	std::ofstream out;
-	out.open(outname);
-	XYZ temp;
-	for(unsigned int i=0;i<N;++i) {
-		temp = r[i];
-		temp.pbc(L);	
-		out << temp.x << '\t';
-		out << temp.y << '\t';
-		out << temp.z;
-		if(i<(N-1)) out << '\n';
-	}
-
-	out.close();
-
-}
-
-
 
 void System::step()
 {
+	//if(interactions.get_epsilon() > 0 and (ti%10 == 0)) {
+	//	interactions.get_forces(Fint,r);
+	//	ti = 0;
+	//}
+	//++ti;
+
+	interactions.get_forces(Fint,r);
 	for(unsigned int i=0;i<N;++i) {
-
-		Bri = bfield_ptr->f(r[i]);
-
-		calculate_interactions();
-	
-		system_func::xyz_random_normal(xi,rndist); xi *= sqrt_2dt;
-
+		
+		Bri = bfield.get_field(r[i]);
+		
 		r[i] += v[i]*dt;
+
+		system_func::xyz_random_normal(xi,rndist);
+		xi *= sqrt_2dt;
 
 		dv.x = ( Bri*v[i].y*dt - v[i].x*dt + Fint[i].x*dt +
 				Fwall[i].x*dt + v0*p[i].x*dt + xi.x)/m;	
@@ -159,7 +116,7 @@ void System::step()
 
 		v[i] += dv;
 	
-		Fwall[i] = wall_ptr->f(r[i]);
+		Fwall[i] = wall.wallForce(r[i]);
 
 		if( v0 > 0) {
 			
@@ -183,10 +140,18 @@ System::System(ConfigFile config)
 	ndist(0.,1.),udist(0,1),
 	seed(config.read<unsigned int>("seed")),
 	rng(seed), rndist(rng,ndist), rudist(rng,udist),
-	noField(), fieldSine(config.read<double>("B"),config.read<double>("w") ),
-	fieldHill(config.read<double>("B"),config.read<double>("L"))
+	bfield(config.read<double>("B"),
+				config.read<double>("w"),
+				config.read<double>("L"),
+				config.read<std::string>("BType") ),	
+	wall(config.read<double>("sigmaW"),
+		config.read<double>("epsilonW"),
+		config.read<double>("L"),
+		config.read<string>("WallType"))
 {
 	XYZ rr;
+
+	// init parameters
 	N = config.read<unsigned int>("N");
 	L = config.read<double>("L");
 	m = config.read<double>("m");
@@ -196,50 +161,27 @@ System::System(ConfigFile config)
 	sqrt_2dt = std::sqrt(2*dt);
 	sqrt_2dt_Dr = std::sqrt(2*dt*Dr);
 
+	// init state
 	t = 0.0;
 	r = std::vector<XYZ>(N);
 	dr = std::vector<XYZ>(N);
 	v = std::vector<XYZ>(N);
 	p = std::vector<XYZ>(N);
-	
-	std::string BType = config.read<std::string>("BType");
 
-	if( BType == "none") {
-		bfield_ptr = &noField;	
-	} else if( BType == "sine" ) {
-		bfield_ptr = &fieldSine;
-	} else if( BType == "hill" ) {
-		bfield_ptr = &fieldHill;
-	}
 
-	wallType = config.read<std::string>("WallType");
-
-	nowall = NoWall();
-	sqwall = SquareWall(config.read<double>("sigmaW"),
-			config.read<double>("epsilonW"),
-			config.read<double>("L") );
-
-	if( wallType == "none") {
-		wall_ptr = &nowall;
-	} else if( wallType == "square") {
-		wall_ptr = &sqwall;
-	}
-
+	// wall force object
 	Fwall = std::vector<XYZ>(N,XYZ(0,0,0));
+
+	// init interaction forces
+	interactions = Interactions(config.read<double>("epsilon"),
+				config.read<double>("sigma") );
 	Fint = std::vector<XYZ>(N,XYZ(0,0,0));
-
-	epsilon = config.read<double>("epsilon");
-	sigma = config.read<double>("sigma");	
-	rco = sigma*pow(2.,1./6.);
-
+	ti = 0;
 }
 
 void System::init_random()
 {
-	double l = 0.;
-	if(wallType == "square") {
-		l = wall_ptr->get_sigma()*pow(2.,1./6.);
-	}
+	double l = wall.get_sigma()*pow(2.,1./6.);
 	XYZ zeta;
 	double d;
 
@@ -285,6 +227,23 @@ void System::init_random()
 }
 
 
+void System::write(const char* outname)
+{
+	std::ofstream out;
+	out.open(outname);
+	XYZ temp;
+	for(unsigned int i=0;i<N;++i) {
+		temp = r[i];
+		temp.pbc(L);	
+		out << temp.x << '\t';
+		out << temp.y << '\t';
+		out << temp.z;
+		if(i<(N-1)) out << '\n';
+	}
+
+	out.close();
+
+}
 
 class Integration {
 public:
