@@ -188,8 +188,13 @@ void System::init_random()
 	// node_pd: nodes per dim
 	int node_pd = ceil(pow(1.*N,1./3));
 	int Nnodes = node_pd*node_pd*node_pd;
-	double node_dist = (L-2*l)/node_pd;
-	
+	double node_dist = 0;
+	if( wall.get_sigma() > 0.0001) {
+		node_dist = (L-2*l)/(node_pd-1);
+	} else {
+		node_dist = (L-2*l)/node_pd;
+	}
+
 	std::vector<XYZ> nodes(Nnodes);
 	int i=0;
 	for(int xi =0;xi<node_pd;++xi) {
