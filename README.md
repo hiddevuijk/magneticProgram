@@ -2,7 +2,7 @@
 
 same as magnetic but with a object oriented approach
 
-
+-- init on random fcc lattice
 -- implement XYZ functions in namcespace xyz
 
 
