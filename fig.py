@@ -14,8 +14,8 @@ py = np.loadtxt("py.dat")
 pz = np.loadtxt("pz.dat")
 
 plt.subplot(1,3,1)
-#rhoY = np.mean(rho,axis=1)
-#plt.plot(bins,rhoY)
+rhoY = np.mean(rho,axis=1)
+plt.plot(bins,rhoY)
 
 plt.subplot(1,3,2)
 fxY = np.mean(fx,axis=1)
