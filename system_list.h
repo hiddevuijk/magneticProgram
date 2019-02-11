@@ -101,15 +101,16 @@ public:
 };
 void System::step_list()
 {
-	static int iii = 0;
 	interactions.get_forces(Fint,r,neigh_index,neigh_number);
-	++iii;
 	for(unsigned int i=0;i<N;++i) {
 		
 		Bri = bfield.get_field(r[i]);
 		
 		r[i] += v[i]*dt;
 
+		// check if sum of two largest distances moved
+		// is larger than maxDist, if true
+		// update neighbour list.
 		dist_since_update[i] += v[i]*dt;
 		double dist = dist_since_update[i].length();
 		if( dist > max2Dist ){
@@ -122,8 +123,6 @@ void System::step_list()
 		}
 		if( maxDist+max2Dist > distUpdate) {
 			neighbour_update();
-			std::cout << '\t' << '\t' << iii << std::endl;
-			iii = 0;
 		}	
 
 
@@ -157,11 +156,6 @@ void System::step_list()
 }
 void System::step()
 {
-	//if(interactions.get_epsilon() > 0 and (ti%10 == 0)) {
-	//	interactions.get_forces(Fint,r);
-	//	ti = 0;
-	//}
-	//++ti;
 
 	interactions.get_forces(Fint,r);
 	for(unsigned int i=0;i<N;++i) {
@@ -273,8 +267,12 @@ System::System(ConfigFile config)
 	dist_since_update = std::vector<XYZ>(N,XYZ(0,0,0));
 	maxDist = 0;
 	max2Dist = 0;
-	distUpdate = rn-config.read<double>("sigma")*pow(2.,1./6.);
-
+	
+	double rc = config.read<double>("rc");
+	distUpdate = rn-rc;
+	if( rn > 0.5*L) {
+		distUpdate = 0.5*L;
+	}
 	
 }
 

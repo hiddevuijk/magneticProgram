@@ -74,14 +74,14 @@ int main()
 		for(unsigned int tti = 0;tti<int_params.t_unit;++tti)
 			system.step_list();		
 		//system.neighbour_update();
-		/*
+	
 		pressure.sample(system);
 		if( (ti%int_params.sample_freq) == 0 ) {
 			density.sample(system);
 			orientation.sample(system);
 			flux.sample(system);
 		}
-		*/
+
 	}
 
 	cout << "Simulation finished.\nNormalizing and writing results ..." << endl;
