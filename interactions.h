@@ -17,6 +17,11 @@ public:
 	// the vector r, and store in matrix F
 	void get_forces(std::vector<XYZ>& F,
 		const std::vector<XYZ>& r);
+	void get_forces(std::vector<XYZ>& F,
+		const std::vector<XYZ>& r,
+		const std::vector<std::vector<unsigned int> >& neigh_index,
+		const std::vector<unsigned int>& neigh_number);
+
 
 	double get_epsilon() const { return epsilon; };
 private:
@@ -50,6 +55,22 @@ XYZ Interactions::force(const XYZ& r1,const XYZ& r2)
 }	
 
 
+void Interactions::get_forces(
+	std::vector<XYZ>& F, const std::vector<XYZ>& r,
+	const std::vector<std::vector<unsigned int> >& neigh_index,
+	const std::vector<unsigned int>& neigh_number)
+{
+	XYZ f;
+	std::fill(F.begin(),F.end(),XYZ(0.,0.,0.));
+	for(unsigned int index = 0;index<r.size();++index) {
+		for(unsigned int i=0; i< neigh_number[index];++i) {
+			f = force(r[index],r[neigh_index[index][i]]);
+			F[index] += f;
+			// if neigh. pair is stored once
+			F[neigh_index[index][i] ] -= f;
+		}
+	}
+}
 void Interactions::get_forces(
 	std::vector<XYZ>& F, const std::vector<XYZ>& r)
 {

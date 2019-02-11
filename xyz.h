@@ -133,9 +133,16 @@ XYZ operator/ (const XYZ &r1, double div)
 namespace xyz {
 
 	double dist(const XYZ &r1, const XYZ &r2);
-	double dist2(const XYZ &r1, const XYZ &r2);
+	double dist_sq(const XYZ &r1, const XYZ &r2);
 	double dist_pbc(const XYZ &r1, const XYZ &r2,double L);
-	double dist2_pbc(const XYZ &r1, const XYZ &r2, double L);
+	double dist_sq_pbc(const XYZ &r1, const XYZ &r2, double L)
+		{
+			XYZ d = r1 - r2;
+			d.x -= L*round(d.x/L);
+			d.y -= L*round(d.y/L);
+			d.z -= L*round(d.z/L);
+			return d.x*d.x+d.y*d.y+d.z*d.z;
+		}
 
 	// dot product cross product
 	double dot(const XYZ &r1, const XYZ &r2) {

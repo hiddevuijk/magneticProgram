@@ -4,7 +4,7 @@
 #include "xyz.h"
 #include "bfield.h"
 #include "walls.h"
-#include "system.h"
+#include "system_list.h"
 #include "density.h"
 #include "orientation.h"
 #include "flux.h"
@@ -36,6 +36,8 @@ int main()
 
 	// start with random config. 
 	system.init_random();
+	system.neighbour_update();
+
 	system.write("initial_config.dat");
 
 	// objects to sample density, orientation and flux
@@ -55,8 +57,8 @@ int main()
 		}
 		// make t_unit time steps
 		for(unsigned int tti=0; tti < int_params.t_unit; ++tti)		
-			system.step();
-		
+			system.step_list();
+		//system.neighbour_update();	
 	}
 
 	cout << "Ended equilibration. Starting sampling ... \n";
@@ -70,14 +72,16 @@ int main()
 
 		// make t_unit time steps
 		for(unsigned int tti = 0;tti<int_params.t_unit;++tti)
-			system.step();		
-
+			system.step_list();		
+		//system.neighbour_update();
+		/*
 		pressure.sample(system);
 		if( (ti%int_params.sample_freq) == 0 ) {
 			density.sample(system);
 			orientation.sample(system);
 			flux.sample(system);
 		}
+		*/
 	}
 
 	cout << "Simulation finished.\nNormalizing and writing results ..." << endl;
