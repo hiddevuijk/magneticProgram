@@ -17,11 +17,20 @@ public:
 	// the vector r, and store in matrix F
 	void get_forces(std::vector<XYZ>& F,
 		const std::vector<XYZ>& r);
+
+
 	void get_forces(std::vector<XYZ>& F,
 		const std::vector<XYZ>& r,
 		const std::vector<std::vector<unsigned int> >& neigh_index,
 		const std::vector<unsigned int>& neigh_number);
 
+
+	//void get_forces(std::vector<XYZ>& F,
+	//		const std::vector<XYZ>& r,
+	//		const std::vector<CLInfo>& cell_list,
+	//		const std::vector<CLInfo*>& head_ptrs,
+	//		const std::vector<std::vector<unsigned int> >& neighbout_cell_list );
+	//	
 
 	double get_epsilon() const { return epsilon; };
 private:
@@ -40,6 +49,53 @@ private:
 	double dist, d6, f;
 };
 
+
+//void Interactions::get_forces(
+//	std::vector<XYZ>& F, const std::vector<XYZ>& r,
+//	const std::vector<CLInfo>& cell_list,
+//	const std::vector<CLInfo*>& head_ptrs,
+//	const std::vector<std::vector<unsigned int> >& neighbour_cell_list)
+//{
+//	unsigned int N = r.size();
+//	unsigned int ncellTot = neighbour_cell_list.size();
+//	XYZ f;
+//	CLInfo* head;
+//	CLInfo* head2;
+//	unsigned int cell_index, neighbour_cell_index;
+//	for(unsigned int i=0;i<N;++i) {	
+//		
+//		cell_index = cell_list[i].cell_index;		
+//		// loop over other cells
+//		for(unsigned int nci=0; nci<13; ++nci) {
+//			neighbour_cell_index = neighbour_cell_list[cell_index][nci];
+//			head = head_ptrs[neighbour_cell_index];
+//			while(head != 0) {
+//				f = force(r[i],r[head->index]);
+//				F[i] += f;
+//				F[head->index] -= f;
+//				head = head->next_ptr;
+//			}
+//		}
+//	}
+//	
+//	// contribution from interactions within a cell
+//	for(unsigned int cell_index=0;cell_index<ncellTot;++cell_index) {
+//		head = head_ptrs[cell_index];
+//		while( head !=0 ){
+//			head2 = head->next_ptr;
+//			while(head2 != 0) {
+//				f = force(r[head->index], r[head2->index] );
+//				F[head->index] +=  f;
+//				F[head2->index] -= f;
+//				head2 = head2->next_ptr;
+//			}
+//			head = head->next_ptr;
+//		}
+//		
+//
+//	}
+//
+//}
 
 XYZ Interactions::force(const XYZ& r1,const XYZ& r2)
 {

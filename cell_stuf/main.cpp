@@ -5,8 +5,8 @@
 #include "xyz.h"
 #include "bfield.h"
 #include "walls.h"
-#include "system_list.h"
-//#include "system_cell.h"
+//#include "system_list.h"
+#include "system_cell.h"
 #include "density.h"
 #include "orientation.h"
 #include "flux.h"
@@ -38,7 +38,7 @@ int main()
 
 	// start with random config. 
 	system.init_random();
-	system.neighbour_update();
+	//system.neighbour_update();
 
 
 	system.write("initial_config.dat");
@@ -61,8 +61,8 @@ int main()
 		// make t_unit time steps
 		for(unsigned int tti=0; tti < int_params.t_unit; ++tti)	{
 			//system.step(); // needs system.h
-			system.step_list(); // needs system_list.h
-			//system.step_cell();
+			//system.step_list(); // needs system_list.h
+			system.step_cell();
 		}
 	}
 
@@ -78,8 +78,8 @@ int main()
 		// make t_unit time steps
 		for(unsigned int tti = 0;tti<int_params.t_unit;++tti) {
 			//system.step();	// needs system.h
-			system.step_list();	// needs system_list.h	
-			//system.step_cell();
+			//system.step_list();	// needs system_list.h	
+			system.step_cell();
 		}
 	
 		pressure.sample(system);
