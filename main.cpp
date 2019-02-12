@@ -58,7 +58,6 @@ int main()
 		// make t_unit time steps
 		for(unsigned int tti=0; tti < int_params.t_unit; ++tti)		
 			system.step_list();
-		//system.neighbour_update();	
 	}
 
 	cout << "Ended equilibration. Starting sampling ... \n";
@@ -73,7 +72,6 @@ int main()
 		// make t_unit time steps
 		for(unsigned int tti = 0;tti<int_params.t_unit;++tti)
 			system.step_list();		
-		//system.neighbour_update();
 	
 		pressure.sample(system);
 		if( (ti%int_params.sample_freq) == 0 ) {
