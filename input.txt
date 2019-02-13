@@ -1,5 +1,5 @@
 #system parameters
-N = 90
+N = 100
 L = 10.
 m = 0.002
 v0 = 30.
@@ -11,24 +11,17 @@ BType = linearAsym
 B = 4.
 w = 0.6283185307179586
 
-#interaction parameters
-sigma = 1.
-epsilon = 1.
 
 #wall parameters
-WallType = tube
-sigmaW = .25
+WallType = square
+sigmaW = 1.
 epsilonW = 1.
 
 #integration parameter
-Nt_init = 10
-Nt = 50
+Nt_init = 100
+Nt = 500
 sample_freq = 1
-print_freq = 1000
-t_unit = 1000
+print_freq = 50
+t_unit = 10000
 dt = 0.000005
 bs = .5
-
-rc = 1.122462048309373
-rn = 1.6
-ncell = 8
