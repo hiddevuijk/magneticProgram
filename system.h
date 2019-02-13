@@ -8,7 +8,6 @@
 #include "xyz.h"
 #include "bfield.h"
 #include "walls.h"
-#include "interactions.h"
 
 #include <iostream>
 #include <vector>
@@ -67,11 +66,6 @@ public:
 	// force on particle i due to the walls
 	std::vector<XYZ> Fwall;
 
-	// interactions object
-	Interactions interactions;
-	// interaction force matrix
-	std::vector<XYZ> Fint;
-	int ti;
 
 	// initialize with random coordinates.
 	void init_random();
@@ -91,13 +85,7 @@ public:
 
 void System::step()
 {
-	//if(interactions.get_epsilon() > 0 and (ti%10 == 0)) {
-	//	interactions.get_forces(Fint,r);
-	//	ti = 0;
-	//}
-	//++ti;
 
-	interactions.get_forces(Fint,r);
 	for(unsigned int i=0;i<N;++i) {
 		
 		Bri = bfield.get_field(r[i]);
@@ -107,11 +95,11 @@ void System::step()
 		system_func::xyz_random_normal(xi,rndist);
 		xi *= sqrt_2dt;
 
-		dv.x = ( Bri*v[i].y*dt - v[i].x*dt + Fint[i].x*dt +
+		dv.x = ( Bri*v[i].y*dt - v[i].x*dt + 
 				Fwall[i].x*dt + v0*p[i].x*dt + xi.x)/m;	
-		dv.y = (-Bri*v[i].x*dt - v[i].y*dt + Fint[i].y*dt +
+		dv.y = (-Bri*v[i].x*dt - v[i].y*dt + 
 				Fwall[i].y*dt + v0*p[i].y*dt + xi.y)/m;	
-		dv.z = (-v[i].z*dt + Fwall[i].z*dt + Fint[i].z*dt +
+		dv.z = (-v[i].z*dt + Fwall[i].z*dt +
 				v0*p[i].z*dt + xi.z)/m;
 
 		v[i] += dv;
@@ -172,11 +160,6 @@ System::System(ConfigFile config)
 	// wall force object
 	Fwall = std::vector<XYZ>(N,XYZ(0,0,0));
 
-	// init interaction forces
-	interactions = Interactions(config.read<double>("epsilon"),
-				config.read<double>("sigma") );
-	Fint = std::vector<XYZ>(N,XYZ(0,0,0));
-	ti = 0;
 }
 
 void System::init_random()
