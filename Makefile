@@ -11,7 +11,7 @@ $(TARGET): $(OBJS)
 
 main.o: main.cpp xyz.h bfield.h walls.h \
 	 pressure.h system.h density.h orientation.h \
-	 flux.h 
+	 flux.h energy.h
 	$(CC) $(CFLAGS) main.cpp
 
 .PHONY: clean

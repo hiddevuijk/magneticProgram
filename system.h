@@ -66,7 +66,6 @@ public:
 	// force on particle i due to the walls
 	std::vector<XYZ> Fwall;
 
-
 	// initialize with random coordinates.
 	void init_random();
 	void init_random(double);
@@ -105,6 +104,7 @@ void System::step()
 		v[i] += dv;
 	
 		Fwall[i] = wall.wallForce(r[i]);
+
 
 		if( v0 > 0) {
 			
@@ -159,7 +159,6 @@ System::System(ConfigFile config)
 
 	// wall force object
 	Fwall = std::vector<XYZ>(N,XYZ(0,0,0));
-
 }
 
 void System::init_random()

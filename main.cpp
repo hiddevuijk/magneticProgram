@@ -10,6 +10,7 @@
 #include "orientation.h"
 #include "flux.h"
 #include "pressure.h"
+#include "energy.h"
 
 #include <iostream>
 #include <iomanip>
@@ -46,6 +47,7 @@ int main()
 	Orientation_xy orientation(int_params.bs,system.L);
 	Flux_xy flux(int_params.bs,system.L,system.N);
 	Pressure pressure(int_params.bs,system.L,system.N);
+	Energy energy(system.N);
 
 	// integrate Nt_init time steps
 	unsigned int ti;
@@ -80,6 +82,7 @@ int main()
 			density.sample(system);
 			orientation.sample(system);
 			flux.sample(system);
+			energy.sample(system);
 		}
 
 	}
@@ -109,6 +112,10 @@ int main()
 	pressure.normalize();
 	pressure.writeX("pressureX.dat");
 	pressure.writeY("pressureY.dat");
+
+	// normalize and save energy
+	energy.normalize();
+	energy.write("energy.dat");
 
 	// write final configuration
 	system.write("final_config.dat");
