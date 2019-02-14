@@ -17,5 +17,6 @@ main.o: main.cpp xyz.h bfield.h walls.h \
 
 .PHONY: clean
 clean:
-	rm -f  $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET)
+	rm -f *.dat
 
