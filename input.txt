@@ -1,14 +1,14 @@
 #system parameters
-N = 100
+N = 10
 L = 10.
 m = 0.002
 v0 = 30.
-Dr = 20.
+Dr = 10.
 seed = 213436111
 
 #magnetic field parameters
 BType = linearAsym
-B = 4.
+B = 10.
 w = 0.6283185307179586
 
 
@@ -18,10 +18,10 @@ sigmaW = 1.
 epsilonW = 1.
 
 #integration parameter
-Nt_init = 100
-Nt = 500
+Nt_init = 10
+Nt = 10
 sample_freq = 1
-print_freq = 50
-t_unit = 10000
-dt = 0.000005
+print_freq = 10
+t_unit = 1000000
+dt = 0.0000005
 bs = .5

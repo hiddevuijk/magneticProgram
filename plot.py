@@ -21,7 +21,7 @@ bins = np.loadtxt("rho_bins.dat")
 fx = np.loadtxt("fx.dat")
 fy = np.loadtxt("fy.dat")
 fz = np.loadtxt("fz.dat")
-print(sum(sum(fy)))
+
 px = np.loadtxt("px.dat")
 py = np.loadtxt("py.dat")
 pz = np.loadtxt("pz.dat")

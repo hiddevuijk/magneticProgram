@@ -73,6 +73,10 @@ public:
 	// increment time
 	void step();
 
+	bool check_x_in_box();
+	bool check_y_in_box();
+	bool check_z_in_box();
+
 	void write(const char* outname);
 	
 	// temporary containers
@@ -171,6 +175,7 @@ void System::init_random()
 	int node_pd = ceil(pow(1.*N,1./3));
 	int Nnodes = node_pd*node_pd*node_pd;
 	double node_dist = 0;
+
 	if( wall.get_sigma() > 0.0001) {
 		node_dist = (L-2*l)/(node_pd-1);
 	} else {
@@ -212,6 +217,51 @@ void System::init_random()
 	}
 
 }
+
+bool System::check_x_in_box()
+{
+	XYZ temp;
+	bool inside = true;
+	for(unsigned int i=0;i<N;++i){
+		temp = r[i];
+		if(temp.x < 0 or temp.x >L)
+			inside = false;
+
+		if(!inside) break;
+	}
+	return inside;
+}
+
+
+bool System::check_y_in_box()
+{
+	XYZ temp;
+	bool inside = true;
+	for(unsigned int i=0;i<N;++i){
+		temp = r[i];
+		if(temp.y < 0 or temp.y>L)
+			inside = false;
+
+		if(!inside) break;
+	}
+	return inside;
+}
+
+bool System::check_z_in_box()
+{
+	XYZ temp;
+	bool inside = true;
+	for(unsigned int i=0;i<N;++i){
+		temp = r[i];
+		if(temp.z < 0 or temp.z>L)
+			inside = false;
+
+		if(!inside) break;
+	}
+	return inside;
+}
+
+
 
 
 void System::write(const char* outname)
