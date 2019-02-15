@@ -65,7 +65,9 @@ public:
 
 	// force on particle i due to the walls
 	std::vector<XYZ> Fwall;
-
+	// vector with Bfield value
+	std::vector<double> Bri_vec;
+	
 	// initialize with random coordinates.
 	void init_random();
 	void init_random(double);
@@ -93,7 +95,8 @@ void System::step()
 	XYZ p_prev;
 	for(unsigned int i=0;i<N;++i) {
 		
-		Bri = bfield.get_field(r[i]);
+		//Bri = bfield.get_field(r[i]);
+		Bri = Bri_vec[i];
 	
 		b = 1./(1+0.5*dt/m);
 		Fwall_prev = Fwall[i];
@@ -127,6 +130,7 @@ void System::step()
 
 
 		Bri = bfield.get_field(r[i]);
+		Bri_vec[i] = Bri;
 		a = 0.5*dt*Bri/m;
 		b = a/(1 + a*a);
 		c = b*a;
@@ -179,6 +183,8 @@ System::System(ConfigFile config)
 
 	// wall force object
 	Fwall = std::vector<XYZ>(N,XYZ(0,0,0));
+
+	Bri_vec = std::vector<double>(N,0.0);
 }
 
 void System::init_random()
