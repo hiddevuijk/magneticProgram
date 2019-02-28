@@ -35,6 +35,20 @@ public:
 
 };
 
+class Bgcircle: public BfieldAll {
+public:
+	Bgcircle() { B = 0.; }
+	Bgcircle(double BB, double ww, double LL) {
+		B = BB; w=ww; L=LL; }
+
+	double f(const XYZ& r) {
+			XYZ R = r;
+			R.pbc(L);
+			double rr = (R.x-0.5*L)*(R.x-0.5*L) +(R.y-0.5*L)*(R.y-0.5*L);
+			return B*std::exp(-rr/w); }
+
+};
+
 class Bhill: public BfieldAll {
 public:
 	Bhill() { B = 0;}
@@ -91,6 +105,7 @@ private:
 	Bhill bhill;
 	Blin  blin;
 	BlinAsym blinasym;
+	Bgcircle bgcircle;
 	
 	BfieldAll *bfield_ptr;
 };
@@ -109,7 +124,7 @@ Bfield::Bfield(double B, double w, double L,
 			std::string BType)
 :
 	bnone(), bsine(B,w), bhill(B,L),
-	blin(B), blinasym(B,L)
+	blin(B), blinasym(B,L),bgcircle(B,w,L)
 {
 	if( BType == "none") {
 		bfield_ptr = &bnone;	
@@ -121,6 +136,8 @@ Bfield::Bfield(double B, double w, double L,
 		bfield_ptr = &blin;
 	} else if( BType == "linearAsym") {
 		bfield_ptr = & blinasym;
+	} else if( BType == "gaussCircle") {
+		bfield_ptr = &bgcircle;
 	} else {
 		std::cerr << "ERROR: " << BType
 			<< " is not a valid option.\n";
