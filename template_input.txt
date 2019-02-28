@@ -1,0 +1,27 @@
+#system parameters
+N = 10
+L = 10.
+m = 0.002
+v0 = 10.
+Dr = 20.
+seed = 213436111
+
+#magnetic field parameters
+BType = sine
+B = 4.
+w = 0.6283185307179586
+
+
+#wall parameters
+WallType = none
+sigmaW = 0.
+epsilonW = 0.
+
+#integration parameter
+Nt_init = 10
+Nt = 10
+sample_freq = 1
+print_freq = 10
+t_unit = 1000000
+dt = 0.0000005
+bs = .5
