@@ -5,8 +5,8 @@
 #include "xyz.h"
 #include "bfield.h"
 #include "walls.h"
-//#include "system.h"
-#include "system_new.h"
+#include "system.h"
+//#include "system_new.h"
 #include "density.h"
 #include "orientation.h"
 #include "flux.h"
@@ -86,12 +86,6 @@ int main()
 		}
 
 	}
-	bool Xinbox = system.check_x_in_box();
-	bool Yinbox = system.check_y_in_box();
-	bool Zinbox = system.check_z_in_box();
-	if(!Xinbox) cout << "Fuck x" << endl;
-	if(!Yinbox) cout << "Fuck y" << endl;
-	if(!Zinbox) cout << "Fuck z" << endl;
 
 
 	cout << "Simulation finished.\nNormalizing and writing results ..." << endl;

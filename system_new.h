@@ -96,7 +96,7 @@ void System::step()
 	for(unsigned int i=0;i<N;++i) {
 		
 		//Bri = bfield.get_field(r[i]);
-		Bri = Bri_vec[i];
+		Bri = Bri_vec[i]
 	
 		b = 1./(1+0.5*dt/m);
 		Fwall_prev = Fwall[i];
@@ -127,7 +127,6 @@ void System::step()
 		dv = v[i] - dr[i]/m + (0.5*dt/m)*(Fwall_prev + Fwall[i] + v0*p_prev + v0*p[i] ) + xi/m;
 		dv.x += (0.5*dt/m)*Bri*v[i].y;
 		dv.y -= (0.5*dt/m)*Bri*v[i].x;
-
 
 		Bri = bfield.get_field(r[i]);
 		Bri_vec[i] = Bri;

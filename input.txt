@@ -2,20 +2,20 @@
 N = 10
 L = 10.
 m = 0.002
-v0 = 30.
-Dr = 10.
+v0 = 10.
+Dr = 20.
 seed = 213436111
 
 #magnetic field parameters
-BType = linearAsym
-B = 10.
+BType = sine
+B = 4.
 w = 0.6283185307179586
 
 
 #wall parameters
-WallType = square
-sigmaW = 1.
-epsilonW = 1.
+WallType = none
+sigmaW = 0.
+epsilonW = 0.
 
 #integration parameter
 Nt_init = 10
